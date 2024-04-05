@@ -29,22 +29,3 @@ spring:
     pattern:
       console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
       file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: unleashonlinein@gmail.com
-    password: iqvy ovqz kuuu tepg
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-jwt:
-  secret:
-    key: "9210a0e16daf5f651d1a6d233e6426a569237c5eb2d0bc63c6cb19f7cebb1a10"
-
-cloudinary:
-  cloud_name: "datji9d5p"
-  api_key: "348622365113146"
-  api_secret: "wxLDIRIsyC8ovBPwLUng846szgU"
