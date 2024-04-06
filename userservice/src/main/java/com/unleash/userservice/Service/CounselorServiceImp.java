@@ -2,10 +2,7 @@ package com.unleash.userservice.Service;
 
 import com.unleash.userservice.DTO.SelectionResponse;
 import com.unleash.userservice.DTO.VerificationDataDto;
-import com.unleash.userservice.Model.CounselorData;
-import com.unleash.userservice.Model.Language;
-import com.unleash.userservice.Model.Specialization;
-import com.unleash.userservice.Model.User;
+import com.unleash.userservice.Model.*;
 import com.unleash.userservice.Reposetory.*;
 import com.unleash.userservice.Service.services.CounselorService;
 import com.unleash.userservice.Service.services.JwtService;
@@ -14,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -31,11 +30,14 @@ public class CounselorServiceImp implements CounselorService {
     private final LanguageRepository languageRepository;
     private final GenderRepository genderRepository;
     private final SpecializationRepository specializationRepository;
+    private final CounselorAvilabilityRepository counselorAvilabilityRepository;
+
+
 
     private final String PATH = "/home/adarsh/BROTOTYPE/Unleash_App/userservice/src/main/resources/static/CounselorDocuments";
 
     @Autowired
-    public CounselorServiceImp(JwtService jwtService, UserRepository userRepository, CloudinaryServiceImp cloudinaryServiceImp, CounselorDateRepository counselorDateRepository, QualificationRepository qualificationRepository, LanguageRepository languageRepository, GenderRepository genderRepository, SpecializationRepository specializationRepository) {
+    public CounselorServiceImp(JwtService jwtService, UserRepository userRepository, CloudinaryServiceImp cloudinaryServiceImp, CounselorDateRepository counselorDateRepository, QualificationRepository qualificationRepository, LanguageRepository languageRepository, GenderRepository genderRepository, SpecializationRepository specializationRepository, CounselorAvilabilityRepository counselorAvilabilityRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.cloudinaryServiceImp = cloudinaryServiceImp;
@@ -45,6 +47,7 @@ public class CounselorServiceImp implements CounselorService {
         this.languageRepository = languageRepository;
         this.genderRepository = genderRepository;
         this.specializationRepository = specializationRepository;
+        this.counselorAvilabilityRepository = counselorAvilabilityRepository;
     }
 
     @Override
@@ -132,6 +135,35 @@ public class CounselorServiceImp implements CounselorService {
             }
         }
         return ResponseEntity.ok().body(null);
+    }
+
+    //=============================================================================================================
+    //=============================================================================================================
+
+    @Override
+    public boolean setSlot(List<String> list, String token){
+        DateTimeFormatter formatter= DateTimeFormatter.ISO_DATE_TIME;
+
+        String  userName = jwtService.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(userName).orElseThrow();
+
+        for (String slot : list){
+            CounselorAvilability counselorAvilability= new CounselorAvilability();
+            LocalDateTime localDateTime = LocalDateTime.parse(slot, formatter);
+            counselorAvilability.setUser(user);
+            counselorAvilability.setSlot(localDateTime);
+            counselorAvilability.setBooked(false);
+            counselorAvilabilityRepository.save(counselorAvilability);
+        }
+        return true;
+    }
+
+    @Override
+    public List findSlotmyslots(String token){
+        String  userName = jwtService.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(userName).orElseThrow();
+        List<CounselorAvilability> list = counselorAvilabilityRepository.findByUserAndSlotGreaterThanEqual(user, LocalDateTime.now());
+        return list;
     }
 
 

@@ -7,8 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="DiscoveryService" />
+        <module name="consultation-service" />
         <module name="sessionservice" />
+        <module name="DiscoveryService" />
+        <module name="discovery-service" />
         <module name="userservice" />
       </profile>
     </annotationProcessing>
@@ -20,6 +22,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="DiscoveryService" options="-parameters" />
       <module name="articleservice" options="-parameters" />
+      <module name="consultation-service" options="-parameters" />
+      <module name="discovery-service" options="-parameters" />
       <module name="sessionservice" options="-parameters" />
       <module name="userservice" options="-parameters" />
     </option>

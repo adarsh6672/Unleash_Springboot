@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/counselor")
@@ -52,6 +53,21 @@ public class CounselorController {
     @GetMapping("/getselectiondata")
     public ResponseEntity<SelectionResponse> getSelectionData(){
         return ResponseEntity.ok().body(counselorService.getSelectionData());
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------------------
+
+    @PostMapping("/schedule-time-slot")
+    public ResponseEntity<?> scheduleTimeSlot(@RequestBody List<String> list,
+                                              @RequestHeader ("Authorization") String headerToken){
+        return ResponseEntity.ok().body(counselorService.setSlot(list,headerToken));
+    }
+
+    @GetMapping("/get-my-slots")
+    public ResponseEntity<?> getMySlots(@RequestHeader ("Authorization") String headerToken){
+        return ResponseEntity.ok().body(counselorService.findSlotmyslots(headerToken));
     }
 
 }
