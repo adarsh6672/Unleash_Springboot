@@ -32,6 +32,7 @@ public class CounselorDTO {
 
     private int yoe;
 
+    private CounselorAvilability nextAvailable;
 
 
 }

@@ -17,6 +17,7 @@ public class VerificationDataDto {
     private List<Integer> languages;
     private int yoe;
     private  List<Integer> specializations;
+    private String fullname;
 
 
 

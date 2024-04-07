@@ -1,11 +1,14 @@
 package com.unleash.userservice.Service;
 
+import com.unleash.userservice.DTO.CounselorDTO;
+import com.unleash.userservice.DTO.CouselorDataDto;
 import com.unleash.userservice.DTO.SelectionResponse;
 import com.unleash.userservice.DTO.VerificationDataDto;
 import com.unleash.userservice.Model.*;
 import com.unleash.userservice.Reposetory.*;
 import com.unleash.userservice.Service.services.CounselorService;
 import com.unleash.userservice.Service.services.JwtService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,13 +34,13 @@ public class CounselorServiceImp implements CounselorService {
     private final GenderRepository genderRepository;
     private final SpecializationRepository specializationRepository;
     private final CounselorAvilabilityRepository counselorAvilabilityRepository;
-
+    private final ModelMapper modelMapper;
 
 
     private final String PATH = "/home/adarsh/BROTOTYPE/Unleash_App/userservice/src/main/resources/static/CounselorDocuments";
 
     @Autowired
-    public CounselorServiceImp(JwtService jwtService, UserRepository userRepository, CloudinaryServiceImp cloudinaryServiceImp, CounselorDateRepository counselorDateRepository, QualificationRepository qualificationRepository, LanguageRepository languageRepository, GenderRepository genderRepository, SpecializationRepository specializationRepository, CounselorAvilabilityRepository counselorAvilabilityRepository) {
+    public CounselorServiceImp(JwtService jwtService, UserRepository userRepository, CloudinaryServiceImp cloudinaryServiceImp, CounselorDateRepository counselorDateRepository, QualificationRepository qualificationRepository, LanguageRepository languageRepository, GenderRepository genderRepository, SpecializationRepository specializationRepository, CounselorAvilabilityRepository counselorAvilabilityRepository, ModelMapper modelMapper) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.cloudinaryServiceImp = cloudinaryServiceImp;
@@ -48,6 +51,7 @@ public class CounselorServiceImp implements CounselorService {
         this.genderRepository = genderRepository;
         this.specializationRepository = specializationRepository;
         this.counselorAvilabilityRepository = counselorAvilabilityRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -137,6 +141,17 @@ public class CounselorServiceImp implements CounselorService {
         return ResponseEntity.ok().body(null);
     }
 
+    @Override
+    public ResponseEntity<?> CounsellorProfile(String token){
+        String  userName = jwtService.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(userName).orElseThrow();
+        CounselorData data = counselorDateRepository.findByUser(user).orElseThrow();
+        CounselorDTO dto= new CounselorDTO();
+        modelMapper.map(data , dto);
+
+        return ResponseEntity.ok().body(dto);
+    }
+
     //=============================================================================================================
     //=============================================================================================================
 
@@ -159,12 +174,15 @@ public class CounselorServiceImp implements CounselorService {
     }
 
     @Override
-    public List findSlotmyslots(String token){
+    public List findSlotmyslots(String date,String token){
         String  userName = jwtService.extractUsername(token.substring(7));
         User user = userRepository.findByUsername(userName).orElseThrow();
-        List<CounselorAvilability> list = counselorAvilabilityRepository.findByUserAndSlotGreaterThanEqual(user, LocalDateTime.now());
+        DateTimeFormatter formatter= DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime localDateTime = LocalDateTime.parse(date, formatter).plusDays(1).withHour(0);
+        List<CounselorAvilability> list = counselorAvilabilityRepository.findByUserAndSlotBetween(user,localDateTime,localDateTime.withHour(23));
         return list;
     }
+
 
 
 }

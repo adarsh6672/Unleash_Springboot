@@ -19,7 +19,9 @@ public interface CounselorService {
 
     ResponseEntity isProfileVerified(String token);
 
+    ResponseEntity<?> CounsellorProfile(String token);
+
     boolean setSlot(List<String> list, String token);
 
-    List findSlotmyslots(String token);
+    List findSlotmyslots(String date,String token);
 }

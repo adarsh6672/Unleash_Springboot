@@ -55,6 +55,12 @@ public class CounselorController {
         return ResponseEntity.ok().body(counselorService.getSelectionData());
     }
 
+    @GetMapping("/get-profile-data")
+    public ResponseEntity<?> getProfileData(@RequestHeader("Authorization") String token){
+        return counselorService.CounsellorProfile(token);
+    }
+
+
     // ------------------------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------------------------
@@ -66,8 +72,9 @@ public class CounselorController {
     }
 
     @GetMapping("/get-my-slots")
-    public ResponseEntity<?> getMySlots(@RequestHeader ("Authorization") String headerToken){
-        return ResponseEntity.ok().body(counselorService.findSlotmyslots(headerToken));
+    public ResponseEntity<?> getMySlots(@RequestParam String date,
+                                        @RequestHeader ("Authorization") String headerToken){
+        return ResponseEntity.ok().body(counselorService.findSlotmyslots(date,headerToken));
     }
 
 }
