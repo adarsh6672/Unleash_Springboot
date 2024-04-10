@@ -24,4 +24,8 @@ public interface CounselorService {
     boolean setSlot(List<String> list, String token);
 
     List findSlotmyslots(String date,String token);
+
+    boolean updateProfileData(VerificationDataDto data, String token);
+
+    boolean updateDocuments(MultipartFile qualification, MultipartFile experience, String token) throws IOException;
 }

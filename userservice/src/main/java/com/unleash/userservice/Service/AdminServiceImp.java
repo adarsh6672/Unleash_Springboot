@@ -2,9 +2,11 @@ package com.unleash.userservice.Service;
 
 import com.unleash.userservice.DTO.CouselorDataDto;
 import com.unleash.userservice.DTO.UserDto;
+import com.unleash.userservice.Model.ConselorUpdations;
 import com.unleash.userservice.Model.CounselorData;
 import com.unleash.userservice.Model.User;
 import com.unleash.userservice.Reposetory.CounselorDateRepository;
+import com.unleash.userservice.Reposetory.CounselorUpdationRepository;
 import com.unleash.userservice.Reposetory.LanguageRepository;
 import com.unleash.userservice.Reposetory.UserRepository;
 import com.unleash.userservice.Service.services.AdminService;
@@ -28,12 +30,15 @@ public class AdminServiceImp implements AdminService {
 
     private final LanguageRepository languageRepository;
 
+    private final CounselorUpdationRepository counselorUpdationRepository;
+
     @Autowired
-    public AdminServiceImp(ModelMapper modelMapper, UserRepository userRepository, CounselorDateRepository counselorDateRepository, LanguageRepository languageRepository) {
+    public AdminServiceImp(ModelMapper modelMapper, UserRepository userRepository, CounselorDateRepository counselorDateRepository, LanguageRepository languageRepository, CounselorUpdationRepository counselorUpdationRepository) {
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.counselorDateRepository = counselorDateRepository;
         this.languageRepository = languageRepository;
+        this.counselorUpdationRepository = counselorUpdationRepository;
     }
 
     @Override
@@ -140,6 +145,47 @@ public class AdminServiceImp implements AdminService {
 
     }
 
+    @Override
+    public List<ConselorUpdations> findCounselorUpdations(){
+
+        List<ConselorUpdations> users=counselorUpdationRepository.findAll();
+        return users;
+
+    }
+
+    @Override
+    public boolean approveUpdate(int id){
+        try{
+            ConselorUpdations updations= counselorUpdationRepository.findById(id).orElseThrow();
+            User user= updations.getUser();
+            CounselorData counselorData= counselorDateRepository.findByUser(user).orElseThrow();
+
+            user.setFullname(updations.getFullname());
+
+            counselorData.setSpecializations(counselorData.getSpecializations());
+            if(updations.getExperienceProof()!=null){
+                counselorData.setYoe(updations.getYoe());
+                counselorData.setExperienceProof(updations.getExperienceProof());
+            }
+            if(updations.getQualificationProof()!=null){
+                counselorData.setQualificationProof(updations.getQualificationProof());
+                counselorData.setQualification(updations.getQualification());
+            }
+            /*counselorData.setLanguages(updations.getLanguages());
+            counselorData.setSpecializations(updations.getSpecializations());*/
+            counselorDateRepository.save(counselorData);
+            userRepository.save(user);
+            counselorUpdationRepository.deleteById(id);
+            System.out.println("its done here ================================================");
+            return true;
+        }catch (Exception e){
+            System.out.println("exception==================================================");
+            e.printStackTrace();
+            return false;
+
+        }
+
+    }
 
 
 

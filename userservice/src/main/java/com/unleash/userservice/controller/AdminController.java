@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(maxAge = 3600)
-@RequestMapping("/admin")
+@RequestMapping("/user/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -71,5 +70,16 @@ public class AdminController {
     public ResponseEntity<?> verifyCounselor(@PathVariable ("id") int id){
         return ResponseEntity.ok().body(adminService.verifyCounselor(id));
     }
+
+    @GetMapping("/updation-requests")
+    public ResponseEntity<?> getUpdationRequests(){
+        return ResponseEntity.ok().body(adminService.findCounselorUpdations());
+    }
+
+    @PostMapping("/approve-update/{id}")
+    public ResponseEntity<?> approveUpdate(@PathVariable ("id") int id){
+        return ResponseEntity.ok().body(adminService.approveUpdate(id));
+    }
+
 
 }

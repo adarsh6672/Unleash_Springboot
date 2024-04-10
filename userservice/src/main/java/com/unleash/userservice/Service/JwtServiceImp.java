@@ -31,6 +31,11 @@ public class JwtServiceImp implements JwtService {
         return extractClaim(token , Claims::getSubject);
     }
 
+    public String extractRole(String token) {
+        String role= extractAllClaims(token).get("roles").toString();
+        return role;
+    }
+
     @Override
     public boolean isValid(String token, UserDetails user){
         String username= extractUsername(token);
@@ -70,6 +75,7 @@ public class JwtServiceImp implements JwtService {
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+ 24*60*60*1000))
+                .claim("roles", user.getRole().toString())
                 .signWith(getSigninKey())
                 .compact();
         System.out.println(token);

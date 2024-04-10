@@ -1,7 +1,6 @@
 package com.unleash.userservice.Service;
 
 import com.unleash.userservice.DTO.CounselorDTO;
-import com.unleash.userservice.DTO.CouselorDataDto;
 import com.unleash.userservice.DTO.SelectionResponse;
 import com.unleash.userservice.DTO.VerificationDataDto;
 import com.unleash.userservice.Model.*;
@@ -35,12 +34,13 @@ public class CounselorServiceImp implements CounselorService {
     private final SpecializationRepository specializationRepository;
     private final CounselorAvilabilityRepository counselorAvilabilityRepository;
     private final ModelMapper modelMapper;
+    private final CounselorUpdationRepository counselorUpdationRepository;
 
 
     private final String PATH = "/home/adarsh/BROTOTYPE/Unleash_App/userservice/src/main/resources/static/CounselorDocuments";
 
     @Autowired
-    public CounselorServiceImp(JwtService jwtService, UserRepository userRepository, CloudinaryServiceImp cloudinaryServiceImp, CounselorDateRepository counselorDateRepository, QualificationRepository qualificationRepository, LanguageRepository languageRepository, GenderRepository genderRepository, SpecializationRepository specializationRepository, CounselorAvilabilityRepository counselorAvilabilityRepository, ModelMapper modelMapper) {
+    public CounselorServiceImp(JwtService jwtService, UserRepository userRepository, CloudinaryServiceImp cloudinaryServiceImp, CounselorDateRepository counselorDateRepository, QualificationRepository qualificationRepository, LanguageRepository languageRepository, GenderRepository genderRepository, SpecializationRepository specializationRepository, CounselorAvilabilityRepository counselorAvilabilityRepository, ModelMapper modelMapper, CounselorUpdationRepository counselorUpdationRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.cloudinaryServiceImp = cloudinaryServiceImp;
@@ -52,6 +52,7 @@ public class CounselorServiceImp implements CounselorService {
         this.specializationRepository = specializationRepository;
         this.counselorAvilabilityRepository = counselorAvilabilityRepository;
         this.modelMapper = modelMapper;
+        this.counselorUpdationRepository = counselorUpdationRepository;
     }
 
     @Override
@@ -183,6 +184,67 @@ public class CounselorServiceImp implements CounselorService {
         return list;
     }
 
+    @Override
+    public boolean updateProfileData(VerificationDataDto data, String token){
+        try {
+            String  userName = jwtService.extractUsername(token.substring(7));
+            User user = userRepository.findByUsername(userName).orElseThrow();
+            ConselorUpdations conselorUpdations;
+            try{
+                conselorUpdations=counselorUpdationRepository.findByUser(user).orElseThrow()  ;
+            }catch (Exception e){
+                conselorUpdations=new ConselorUpdations();
+            }
 
+            conselorUpdations.setQualification(qualificationRepository.findById(data.getQualificationId()).orElseThrow());
+            conselorUpdations.setUser(user);
+            conselorUpdations.setUploadedOn(LocalDateTime.now());
+            conselorUpdations.setYoe(data.getYoe());
+            conselorUpdations.setFullname(data.getFullname());
+
+
+            List<Integer> specializationIds = data.getSpecializations();
+            Set<Specialization> sp = conselorUpdations.getSpecializations();
+            for(Integer spl : specializationIds){
+                sp.add(specializationRepository.findById(spl).orElseThrow());
+            }
+            conselorUpdations.setSpecializations(sp);
+
+            List<Integer> langIds = data.getLanguages();
+            Set<Language> la= conselorUpdations.getLanguages();
+            for(Integer language : langIds){
+                la.add(languageRepository.findById(language).orElseThrow());
+            }
+            conselorUpdations.setLanguages(la);
+            counselorUpdationRepository.save(conselorUpdations);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean updateDocuments(MultipartFile qualification, MultipartFile experience, String token) throws IOException {
+        String  userName = jwtService.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(userName).orElseThrow();
+        ConselorUpdations conselorUpdations= counselorUpdationRepository.findByUser(user).orElseThrow();
+        try {
+            if(qualification!=null){
+                String qualipath= cloudinaryServiceImp.upload(qualification);
+                conselorUpdations.setQualificationProof(qualipath);
+            }
+            if(experience!=null){
+                String expPath=cloudinaryServiceImp.upload(experience);
+                conselorUpdations.setExperienceProof(expPath);
+            }
+
+            counselorUpdationRepository.save(conselorUpdations);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }
