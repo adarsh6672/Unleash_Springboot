@@ -36,9 +36,10 @@ public class PublicController {
         return ResponseEntity.ok().body(publicServiceImp.findAvilableCounselors());
     }
 
-    @PostMapping("/post")
-    public ResponseEntity<?> test(@RequestBody MultipartFile file) throws IOException {
-        return ResponseEntity.ok().body(cloudinaryServiceImp.upload(file));
+    @GetMapping("/get-user")
+    public ResponseEntity<?> getUserWithUserName(@RequestParam("username") String userName){
+
+        return publicServiceImp.getUser(userName);
     }
 
 }

@@ -12,8 +12,8 @@ public class UserController {
     @Autowired
     UserServiceImp userServiceImp;
 
-    @GetMapping("/get-time-slots")
+  /*  @GetMapping("/get-time-slots")
     public ResponseEntity<?> getTimeSlots(@RequestParam String date, @RequestParam int counselorId){
         return ResponseEntity.ok().body(userServiceImp.getAvilability(counselorId,date));
-    }
+    }*/
 }

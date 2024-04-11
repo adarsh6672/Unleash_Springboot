@@ -68,17 +68,7 @@ public class CounselorController {
     //-------------------------------------------------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/schedule-time-slot")
-    public ResponseEntity<?> scheduleTimeSlot(@RequestBody List<String> list,
-                                              @RequestHeader ("Authorization") String headerToken){
-        return ResponseEntity.ok().body(counselorService.setSlot(list,headerToken));
-    }
 
-    @GetMapping("/get-my-slots")
-    public ResponseEntity<?> getMySlots(@RequestParam String date,
-                                        @RequestHeader ("Authorization") String headerToken){
-        return ResponseEntity.ok().body(counselorService.findSlotmyslots(date,headerToken));
-    }
 
     @PostMapping("/profile-data-updation")
     public ResponseEntity<?> profileDataUpdation(@RequestBody VerificationDataDto dto,
@@ -101,9 +91,10 @@ public class CounselorController {
     }
 
     @GetMapping("/test")
-    public ResponseEntity<?> test(@RequestHeader("Authorization") String token){
-        System.out.println(jwtServiceImp.extractRole(token.substring(7))+" ===================================");
-        return ResponseEntity.ok().body(jwtServiceImp.extractRole(token.substring(7)));
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok().body("its working without problems");
     }
+
+
 
 }
