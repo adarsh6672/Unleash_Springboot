@@ -43,6 +43,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                             .mutate()
                             .header("userName", jwtUtil.extractUsername(authHeader))
                              .header("role", jwtUtil.extractRole(authHeader))
+                             .header("userId" , jwtUtil.extractUserId(authHeader))
                             .build();
                 }catch (Exception e){
                     System.out.println("invalid access token....!");

@@ -76,6 +76,7 @@ public class JwtServiceImp implements JwtService {
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+ 24*60*60*1000))
                 .claim("roles", user.getRole().toString())
+                .claim("userId", user.getId().toString())
                 .signWith(getSigninKey())
                 .compact();
         System.out.println(token);

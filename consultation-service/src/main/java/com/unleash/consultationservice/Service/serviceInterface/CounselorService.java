@@ -12,4 +12,8 @@ public interface CounselorService {
     List findAvilableCounselors();
 
     List<CounselorAvilability> getAvilability(int counselorId, String date);
+
+    boolean removeSlotOnDate(int counsId, String date);
+
+    boolean removeSingleSlot(int userId, String date);
 }

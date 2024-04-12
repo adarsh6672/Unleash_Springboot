@@ -8,10 +8,9 @@ import com.unleash.consultationservice.Service.serviceInterface.CounselorService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -67,5 +66,35 @@ public class CounselorServiceImp implements CounselorService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm:ss");
         LocalDateTime startDate= LocalDateTime.parse(date,formatter);
         return counselorAvailabilityRepo.findByUserIdAndSlotBetween(counselorId,startDate,startDate.withHour(23));
+    }
+
+    @Override
+    @Transactional
+    public boolean removeSlotOnDate(int counsId, String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm:ss");
+        LocalDateTime onDate= LocalDateTime.parse(date,formatter);
+        try{
+            counselorAvailabilityRepo.deleteByUserIdAndSlotBetween(counsId,onDate,onDate.withHour(23));
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public boolean removeSingleSlot(int userId, String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm:ss");
+        LocalDateTime onDate= LocalDateTime.parse(date,formatter);
+        try {
+            counselorAvailabilityRepo.deleteByUserIdAndSlot(userId , onDate);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 }

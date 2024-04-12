@@ -18,6 +18,10 @@ public interface CounselorAvailabilityRepo extends JpaRepository<CounselorAvilab
 
     List<CounselorAvilability> findByUserIdAndSlotBetween(int userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
+    void deleteByUserIdAndSlotBetween(int userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+    void deleteByUserIdAndSlot(int userId, LocalDateTime dateTime);
+
     /*Optional<CounselorAvilability> findFirstByUserIdAndSlotAfterAndIsBookedFalseOrderBySlotAsc(int userId, ZonedDateTime currentDateTime);*/
 
     @Query(value = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY slot) as rn FROM counselor_avilability WHERE slot > :currentTime AND is_booked = false) tmp WHERE rn = 1", nativeQuery = true)

@@ -45,7 +45,18 @@ public class SlotController {
         return ResponseEntity.ok().body(counselorService.getAvilability(counselorId,date));
     }
 
+    @DeleteMapping("/remove-slots")
+    public ResponseEntity<?> romoveSloteOfDate(@RequestParam String date,
+                                               @RequestHeader ("userId") int userId){
 
+        return ResponseEntity.ok().body(counselorService.removeSlotOnDate(userId,date));
+    }
+
+    @DeleteMapping("/remove-slot")
+    public ResponseEntity<?>removeSingleSlot(@RequestParam String date,
+                                             @RequestHeader ("userId") int userId){
+        return ResponseEntity.ok().body(counselorService.removeSingleSlot(userId , date));
+    }
 
 
 }

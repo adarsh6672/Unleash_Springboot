@@ -24,6 +24,10 @@ public class JwtUtil {
         return role;
     }
 
+    public String extractUserId(String token) {
+        return extractAllClaims(token).get("userId").toString();
+    }
+
 
 
 
