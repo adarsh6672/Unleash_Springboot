@@ -18,17 +18,17 @@ public class Plans {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    String planeName;
+    String planName;
 
     String iconUrl;
 
     int noOfSession;
 
-
-
     String description;
 
     BigDecimal price;
+
+    boolean isHidden;
 
 
 }

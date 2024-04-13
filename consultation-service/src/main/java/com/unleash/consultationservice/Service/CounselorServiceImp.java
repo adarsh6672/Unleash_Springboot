@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.Service;
 
+import com.unleash.consultationservice.DTO.PlanDto;
 import com.unleash.consultationservice.DTO.UserDto;
 import com.unleash.consultationservice.Interface.UserClient;
 import com.unleash.consultationservice.Model.CounselorAvilability;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -97,4 +100,10 @@ public class CounselorServiceImp implements CounselorService {
         }
 
     }
+
+
+
+
+
+
 }
