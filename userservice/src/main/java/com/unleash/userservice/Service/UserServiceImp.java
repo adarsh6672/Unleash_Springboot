@@ -1,7 +1,10 @@
 package com.unleash.userservice.Service;
 
+import com.unleash.userservice.DTO.UserDto;
 import com.unleash.userservice.Model.User;
 import com.unleash.userservice.Reposetory.UserRepository;
+import com.unleash.userservice.Service.services.JwtService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +16,17 @@ import java.util.List;
 public class UserServiceImp {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+    @Autowired
+    private JwtService jwtService;
 
+    @Autowired
+    private ModelMapper modelMapper;
 
-
-    /*public List<CounselorAvilability> getAvilability(int id , String date){
-
-        User user = userRepository.findById(id).orElseThrow();
-        DateTimeFormatter formatter= DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime localDateTime = LocalDateTime.parse(date, formatter).plusDays(1).withHour(0);
-        List<CounselorAvilability> list = counselorAvilabilityRepository.findByUserAndSlotBetween(user,localDateTime,localDateTime.withHour(23));
-        return list;
-    }*/
+    public UserDto findUserData(String token){
+        String  userName = jwtService.extractUsername(token.substring(7));
+        User user = userRepository.findByUsername(userName).orElseThrow();
+        UserDto dto= modelMapper.map(user,UserDto.class);
+        return dto;
+    }
 }

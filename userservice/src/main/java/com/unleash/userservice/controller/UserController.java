@@ -1,5 +1,6 @@
 package com.unleash.userservice.controller;
 
+import com.unleash.userservice.DTO.UserDto;
 import com.unleash.userservice.Service.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,9 @@ public class UserController {
     @Autowired
     UserServiceImp userServiceImp;
 
-  /*  @GetMapping("/get-time-slots")
-    public ResponseEntity<?> getTimeSlots(@RequestParam String date, @RequestParam int counselorId){
-        return ResponseEntity.ok().body(userServiceImp.getAvilability(counselorId,date));
-    }*/
+    @GetMapping("/get-user-data")
+    public ResponseEntity<?> getUserData(@RequestHeader ("Authorization") String token){
+        return ResponseEntity.ok().body(userServiceImp.findUserData(token));
+
+    }
 }
