@@ -19,4 +19,7 @@ public interface UserClient {
     @GetMapping("/user/counselor/test")
     public ResponseEntity<String> test();
 
+    @GetMapping("/user/counselor/get-username")
+    public String findUsername(@RequestParam int userId);
+
 }

@@ -11,4 +11,6 @@ public interface SubscriptionService {
     String createOrder(String amount , int id) throws RazorpayException;
 
     boolean updateOrder(PaymentDto dto);
+
+    boolean isSubscribed(int userId);
 }

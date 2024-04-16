@@ -30,4 +30,14 @@ public class SubscriptionController {
         }
         return ResponseEntity.notFound().build();
     }
+
+
+    @GetMapping("/check-Subscription")
+    public ResponseEntity<?>checkSubscription(@RequestHeader ("userId") int userId ){
+        if(subscriptionService.isSubscribed(userId)){
+            return ResponseEntity.ok().body(true);
+        }
+        return ResponseEntity.ok().body(false);
+    }
+
 }

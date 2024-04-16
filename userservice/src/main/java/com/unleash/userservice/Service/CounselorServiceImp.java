@@ -220,4 +220,9 @@ public class CounselorServiceImp implements CounselorService {
         return false;
     }
 
+    @Override
+    public String findUserName(int userId) {
+       return userRepository.findById(userId).get().getFullname();
+    }
+
 }

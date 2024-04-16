@@ -90,10 +90,10 @@ public class CounselorController {
         return ResponseEntity.internalServerError().body("upload failed");
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test(){
-        return ResponseEntity.ok().body("its working without problems");
-    }
+   @GetMapping("/get-username")
+    public String findUsername(@RequestParam int userId){
+        return counselorService.findUserName(userId);
+   }
 
 
 

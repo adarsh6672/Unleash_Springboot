@@ -25,4 +25,6 @@ public interface CounselorService {
     boolean updateProfileData(VerificationDataDto data, String token);
 
     boolean updateDocuments(MultipartFile qualification, MultipartFile experience, String token) throws IOException;
+
+    String findUserName(int userId);
 }
