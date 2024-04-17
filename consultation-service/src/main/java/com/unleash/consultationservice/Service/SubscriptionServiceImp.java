@@ -104,7 +104,7 @@ public class SubscriptionServiceImp implements SubscriptionService {
 
     @Override
     public boolean isSubscribed(int userId) {
-      Subscription subscription = subscriptionRepo.findLatestSubscriptionByUserId(userId);
+      Subscription subscription = subscriptionRepo.findLatestSubscriptionByUserId(userId).orElseThrow();
       if(subscription!=null && subscription.getSessionCount()>0){
           return true;
       }

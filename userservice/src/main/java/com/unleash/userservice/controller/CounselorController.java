@@ -3,6 +3,7 @@ package com.unleash.userservice.controller;
 import com.unleash.userservice.DTO.SelectionResponse;
 import com.unleash.userservice.DTO.VerificationDataDto;
 import com.unleash.userservice.Service.JwtServiceImp;
+import com.unleash.userservice.Service.UserServiceImp;
 import com.unleash.userservice.Service.services.CounselorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,6 +21,9 @@ public class CounselorController {
     private final CounselorService counselorService;
     @Autowired
     private JwtServiceImp jwtServiceImp;
+
+    @Autowired
+    private UserServiceImp userServiceImp;
 
     @Autowired
     public CounselorController(CounselorService counselorService) {
@@ -93,6 +97,11 @@ public class CounselorController {
    @GetMapping("/get-username")
     public String findUsername(@RequestParam int userId){
         return counselorService.findUserName(userId);
+   }
+
+   @GetMapping("/get-all-counselors")
+    public List findAllCounselors(){
+        return userServiceImp.findAllCounselors();
    }
 
 

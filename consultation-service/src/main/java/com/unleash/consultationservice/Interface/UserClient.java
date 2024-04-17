@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @FeignClient(name = "user-service" )
 public interface UserClient {
 
@@ -21,5 +23,8 @@ public interface UserClient {
 
     @GetMapping("/user/counselor/get-username")
     public String findUsername(@RequestParam int userId);
+
+    @GetMapping("/user/counselor/get-all-counselors")
+    public List<UserDto> findAllCounselors();
 
 }

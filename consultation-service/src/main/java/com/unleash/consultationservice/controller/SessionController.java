@@ -17,4 +17,14 @@ public class SessionController {
                                       @RequestParam int slotId){
         return sessionService.bookSession(userId , slotId);
     }
+
+    @GetMapping("/get-dashboard-data")
+    public ResponseEntity<?> getDashboardData(@RequestHeader("userId") int userId){
+        return sessionService.getDashBoardData(userId);
+    }
+
+    @GetMapping("/get-allbookings")
+    public ResponseEntity<?>getAllBooking(@RequestHeader ("userId") int userId){
+        return sessionService.findAllBookingsByUser(userId);
+    }
 }

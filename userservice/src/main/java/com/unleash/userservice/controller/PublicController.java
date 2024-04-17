@@ -42,4 +42,9 @@ public class PublicController {
         return publicServiceImp.getUser(userName);
     }
 
+    @GetMapping("/get-counselor-profile")
+    public ResponseEntity<?> getCounselorProfile(@RequestParam int counsId){
+       return publicServiceImp.getCounselorProfileById(counsId);
+    }
+
 }

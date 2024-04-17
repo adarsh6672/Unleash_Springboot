@@ -57,6 +57,28 @@ public class PublicServiceImp {
         return userDtos;
     }
 
+    public ResponseEntity<?> getCounselorProfileById(int counsId){
+        try {
+            User counselor = userRepository.findById(counsId).orElseThrow();
+            CounselorData data = counselorDateRepository.findByUser(counselor).orElseThrow();
+            CounselorDTO counselorDTO = modelMapper.map(data,CounselorDTO.class);
+            List<AvilabilityDto> avilabilityDtos= avilabilityDtos=consultationClient.findAvailableCounselors().getBody();
+
+                AvilabilityDto next =avilabilityDtos.stream()
+                        .filter(item-> item.getUserId() == counsId).findFirst().orElse(null);
+                if(next!=null){
+                    counselorDTO.setNextAvailable(next.getSlot().toString());
+                }else {
+                    counselorDTO.setNextAvailable(null);
+                }
+                return ResponseEntity.ok().body(counselorDTO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
 
     public ResponseEntity getUser(String userName){
         System.out.println(userName);
