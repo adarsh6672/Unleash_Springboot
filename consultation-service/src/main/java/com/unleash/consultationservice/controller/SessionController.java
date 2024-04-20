@@ -17,6 +17,10 @@ public class SessionController {
                                       @RequestParam int slotId){
         return sessionService.bookSession(userId , slotId);
     }
+    @PutMapping("/cancel-slot")
+    public ResponseEntity<?> cancelSlot(@RequestParam int  slotId){
+        return sessionService.cancelSession(slotId);
+    }
 
     @GetMapping("/get-dashboard-data")
     public ResponseEntity<?> getDashboardData(@RequestHeader("userId") int userId){

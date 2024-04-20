@@ -128,4 +128,26 @@ public class SessionServiceImp implements SessionService {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Override
+    public ResponseEntity<?> cancelSession(int slotId) {
+        try {
+            SessionBooking booking =sessionBookingRepo.findById(slotId).orElseThrow();
+            booking.setStatus(Status.CANCELED);
+            CounselorAvilability avilability = booking.getAvilability();
+            int patientId = booking.getPatientId();
+            Subscription subscription=subscriptionRepo.findLatestSubscriptionByUserId(patientId).orElseThrow();
+            subscription.setSessionCount(subscription.getSessionCount()+1);
+            avilability.setBooked(false);
+            sessionBookingRepo.save(booking);
+            counselorAvailabilityRepo.save(avilability);
+            subscriptionRepo.save(subscription);
+            return ResponseEntity.ok().body("booking Cancelled");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+
+
+    }
 }
