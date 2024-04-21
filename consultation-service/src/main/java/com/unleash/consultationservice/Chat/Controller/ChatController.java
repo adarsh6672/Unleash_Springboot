@@ -34,7 +34,7 @@ public class ChatController {
         return notification;
     }
 
-    @GetMapping("/messages/{senderId}/{recipientId}")
+    @GetMapping("/ws/messages/{senderId}/{recipientId}")
     public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable String senderId,
                                                               @PathVariable String recipientId) {
         return ResponseEntity
