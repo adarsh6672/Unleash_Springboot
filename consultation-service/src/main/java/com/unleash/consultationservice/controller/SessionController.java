@@ -31,4 +31,9 @@ public class SessionController {
     public ResponseEntity<?>getAllBooking(@RequestHeader ("userId") int userId){
         return sessionService.findAllBookingsByUser(userId);
     }
+
+    @GetMapping("/get-allbookings-ofcounselor")
+    public ResponseEntity<?> getAllBookingsOfCounselor(@RequestHeader ("userId") int userId){
+        return sessionService.findAllBookingsForCounselor(userId);
+    }
 }

@@ -27,4 +27,6 @@ public interface UserClient {
     @GetMapping("/user/counselor/get-all-counselors")
     public List<UserDto> findAllCounselors();
 
+    @GetMapping("/user/admin/fetchpatients")
+    public ResponseEntity<List<UserDto>> getPatients();
 }

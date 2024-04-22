@@ -12,4 +12,6 @@ public interface SessionService {
     ResponseEntity<?> findAllBookingsByUser(int userId);
 
     ResponseEntity<?> cancelSession(int slotId);
+
+    ResponseEntity<?> findAllBookingsForCounselor(int userId);
 }

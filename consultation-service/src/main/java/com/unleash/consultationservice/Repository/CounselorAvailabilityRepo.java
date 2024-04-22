@@ -14,7 +14,7 @@ public interface CounselorAvailabilityRepo extends JpaRepository<CounselorAvilab
 
     /*List<CounselorAvilability> findByUserIdAndSlotGreaterThanEqual(int userId, ZonedDateTime today);*/
 
-
+    List<CounselorAvilability> findByUserId(int userId);
 
     List<CounselorAvilability> findByUserIdAndSlotBetween(int userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 

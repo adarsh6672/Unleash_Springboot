@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.Repository;
 
+import com.unleash.consultationservice.Model.CounselorAvilability;
 import com.unleash.consultationservice.Model.SessionBooking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,7 @@ public interface SessionBookingRepo extends JpaRepository<SessionBooking , Integ
     Optional<SessionBooking> findLatestSessionBookingByUserId(int userId);
 
     List<SessionBooking> findByPatientId(int patientId);
+
+    Optional<SessionBooking> findByAvilability(CounselorAvilability avilability);
 
 }

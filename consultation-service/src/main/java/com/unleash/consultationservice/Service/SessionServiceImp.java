@@ -1,9 +1,6 @@
 package com.unleash.consultationservice.Service;
 
-import com.unleash.consultationservice.DTO.BookingResponseDto;
-import com.unleash.consultationservice.DTO.SessionDto;
-import com.unleash.consultationservice.DTO.UserDashboardResponseDto;
-import com.unleash.consultationservice.DTO.UserDto;
+import com.unleash.consultationservice.DTO.*;
 import com.unleash.consultationservice.Interface.UserClient;
 import com.unleash.consultationservice.Model.CounselorAvilability;
 import com.unleash.consultationservice.Model.Plans;
@@ -149,5 +146,40 @@ public class SessionServiceImp implements SessionService {
         }
 
 
+    }
+
+    @Override
+    public ResponseEntity<?> findAllBookingsForCounselor(int userId) {
+        try{
+            List<CounselorAvilability> avilabilities= counselorAvailabilityRepo.findByUserId(userId);
+            List<SessionBooking> bookings = new ArrayList<>();
+            for(CounselorAvilability avilability : avilabilities){
+               SessionBooking booking= sessionBookingRepo.findByAvilability(avilability).orElse(null);
+               if(booking!=null){
+                   bookings.add(booking);
+               }
+            }
+            Collections.sort(bookings, new SessionBookingComparator());
+            List<UserDto> patients = userClient.getPatients().getBody();
+            List<CounselorSessionDto> dtos = new ArrayList<>();
+            for(SessionBooking booking : bookings){
+                CounselorSessionDto dto = new CounselorSessionDto();
+                dto.setSessionBooking(booking);
+                if(booking!=null && patients!=null){
+                    System.out.println("its fetched");
+                   UserDto user=  patients.stream().filter(patient -> patient.getId()== booking.getPatientId())
+                            .findFirst().orElse(null);
+                   dto.setUserDto(user);
+
+                }
+                dtos.add(dto);
+
+            }
+            return ResponseEntity.ok().body(dtos);
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+       return ResponseEntity.badRequest().build();
     }
 }
