@@ -6,27 +6,30 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins:
+              - "http://localhost:3000"
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
             allowedHeaders: "*"
+            allowCredentials: true
             maxAge: 3600
+        add-to-simple-url-handler-mapping: true
       routes:
-        - id: user-service
+        - id: user-service-public
           uri: lb://USER-SERVICE
           predicates:
             - Path=/public/**
 
-        - id: user-service
+        - id: user-service-auth
           uri: lb://USER-SERVICE
           predicates:
             - Path=/auth/**
 
 
-        - id: user-service
+        - id: user-service-user
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
@@ -44,6 +47,19 @@ spring:
           uri: lb://CONSULTATION-SERVICE
           predicates:
             - Path=/plan/**
+
+        - id: article-service
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/article/**
+          filters:
+            - AuthenticationFilter
+
+        - id: websocket_route
+          uri: lb:ws://CONSULTATION-SERVICE
+          predicates:
+            - Path=/ws/**
+
 
   application:
     name: UNLEASH-GATEWAY

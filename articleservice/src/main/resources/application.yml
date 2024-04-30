@@ -1,14 +1,14 @@
 server:
-  port: 8082
+  port: 8083
 spring:
   application:
-    name: consultation-service
+    name: article-service
   servlet:
     multipart.enabled: true
     multipart.max-file-size: 20MB
     multipart.max-request-size: 20MB
   dataSource:
-    url: jdbc:mysql://localhost:3306/unleash_consultationservice
+    url: jdbc:mysql://localhost:3306/unleash_articleservice?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -35,7 +35,3 @@ cloudinary:
   cloud_name: "datji9d5p"
   api_key: "348622365113146"
   api_secret: "wxLDIRIsyC8ovBPwLUng846szgU"
-
-razorpay:
-  key_id: "rzp_test_8b6GHpvbMnFOEM"
-  secret_id: "meOU2C0AW0axCyREWHQYZ1Qf"
