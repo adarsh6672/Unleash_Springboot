@@ -15,8 +15,8 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
 
     public Optional<String> getChatRoomId(
-            String senderId,
-            String recipientId,
+            int senderId,
+            int recipientId,
             boolean createNewRoomIfNotExists
     ) {
         return chatRoomRepository
@@ -32,7 +32,7 @@ public class ChatRoomService {
                 });
     }
 
-    private String createChatId(String senderId, String recipientId) {
+    private String createChatId(int senderId, int recipientId) {
         var chatId = String.format("%s_%s", senderId, recipientId);
 
         ChatRoom senderRecipient = ChatRoom

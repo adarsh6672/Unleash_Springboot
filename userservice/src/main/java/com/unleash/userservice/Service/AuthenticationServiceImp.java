@@ -5,12 +5,14 @@ package com.unleash.userservice.Service;
 
 import com.unleash.userservice.DTO.OtpDto;
 import com.unleash.userservice.DTO.AuthenticationResponse;
+import com.unleash.userservice.DTO.UserDto;
 import com.unleash.userservice.Model.CounselorData;
 import com.unleash.userservice.Model.Role;
 import com.unleash.userservice.Model.User;
 import com.unleash.userservice.Reposetory.CounselorDateRepository;
 import com.unleash.userservice.Reposetory.UserRepository;
 import com.unleash.userservice.Service.services.AuthenticationService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,14 +33,17 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final EmailServiceImp emailServiceImp;
     private final AuthenticationManager authenticationManager;
 
+    private final ModelMapper modelMapper;
+
     @Autowired
-    public AuthenticationServiceImp(UserRepository repository, CounselorDateRepository counselorDateRepository, PasswordEncoder passwordEncoder, JwtServiceImp jwtService, EmailServiceImp emailServiceImp, AuthenticationManager authenticationManager) {
+    public AuthenticationServiceImp(UserRepository repository, CounselorDateRepository counselorDateRepository, PasswordEncoder passwordEncoder, JwtServiceImp jwtService, EmailServiceImp emailServiceImp, AuthenticationManager authenticationManager, ModelMapper modelMapper) {
         this.repository = repository;
         this.counselorDateRepository = counselorDateRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.emailServiceImp = emailServiceImp;
         this.authenticationManager = authenticationManager;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -64,8 +69,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
 
         String token = jwtService.generateToken(user);
-
-        AuthenticationResponse response= new AuthenticationResponse(token , String.valueOf(request.getRole()));
+        UserDto dto = modelMapper.map(user,UserDto.class);
+        AuthenticationResponse response= new AuthenticationResponse(token , String.valueOf(request.getRole()),dto);
         if(user.getRole().equals(Role.COUNSELOR)){
            CounselorData counselorData= counselorDateRepository.findByUser(user).orElseThrow();
            if(!counselorData.isVerified()){
@@ -91,8 +96,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         String role = String.valueOf(user.getRole());
 
         String token = jwtService.generateToken(user);
-
-        AuthenticationResponse response= new AuthenticationResponse(token , String.valueOf(user.getRole()));
+        UserDto userDto = modelMapper.map(user , UserDto.class);
+        AuthenticationResponse response= new AuthenticationResponse(token , String.valueOf(user.getRole()),userDto);
         if(user.getRole().equals(Role.COUNSELOR)){
             CounselorData counselorData= counselorDateRepository.findByUser(user).orElseThrow();
             if(!counselorData.isVerified()){

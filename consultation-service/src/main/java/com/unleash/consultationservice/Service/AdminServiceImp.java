@@ -23,15 +23,21 @@ public class AdminServiceImp implements AdminServic {
 
     @Override
     public boolean addPlan(Map data , MultipartFile file) throws IOException {
-        Plans plans = new Plans();
-        plans.setPlanName((String) data.get("planName"));
-        plans.setDescription((String) data.get("description"));
-        plans.setPrice(new BigDecimal(String.valueOf(data.get("price"))));
-        plans.setNoOfSession(Integer.parseInt((String) data.get("noOfSession")));
-        String imgpath= cloudinaryService.upload(file);
-        plans.setIconUrl(imgpath);
-        planRepo.save(plans);
-        return true;
+        try{
+            Plans plans = new Plans();
+            plans.setPlanName((String) data.get("planName"));
+            plans.setDescription((String) data.get("description"));
+            plans.setPrice(new BigDecimal(String.valueOf(data.get("price"))));
+            plans.setNoOfSession(Integer.parseInt((String) data.get("noOfSession")));
+            String imgpath= cloudinaryService.upload(file);
+            plans.setIconUrl(imgpath);
+            planRepo.save(plans);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     @Override

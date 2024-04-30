@@ -1,5 +1,7 @@
 package com.unleash.consultationservice.Chat.Controller;
 
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.unleash.consultationservice.Chat.Dto.CallUserRequest;
 import com.unleash.consultationservice.Chat.Model.ChatMessage;
 import com.unleash.consultationservice.Chat.Model.ChatNotification;
 import com.unleash.consultationservice.Chat.Services.ChatMessageService;
@@ -29,15 +31,22 @@ public class ChatController {
                 savedMsg.getRecipientId(),
                 savedMsg.getContent());
         messagingTemplate.convertAndSendToUser(
-                savedMsg.getRecipientId(), "/queue/messages", notification);
+                String.valueOf(savedMsg.getRecipientId()), "/queue/messages", notification);
 
         return notification;
     }
 
     @GetMapping("/ws/messages/{senderId}/{recipientId}")
-    public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable String senderId,
-                                                              @PathVariable String recipientId) {
+    public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable int senderId,
+                                                              @PathVariable int recipientId) {
         return ResponseEntity
                 .ok(chatMessageService.findChatMessages(senderId, recipientId));
+    }
+
+    @MessageMapping("/videocall")
+    public void requestVideoCall(@Payload CallUserRequest request){
+            messagingTemplate.convertAndSendToUser(
+                    request.getData().getUserToCall(),"/queue/messages", request
+            );
     }
 }

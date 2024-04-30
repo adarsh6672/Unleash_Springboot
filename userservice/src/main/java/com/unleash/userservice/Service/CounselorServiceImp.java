@@ -162,11 +162,11 @@ public class CounselorServiceImp implements CounselorService {
         try {
             String  userName = jwtService.extractUsername(token.substring(7));
             User user = userRepository.findByUsername(userName).orElseThrow();
-            ConselorUpdations conselorUpdations;
+            ConselorUpdations conselorUpdations = null;
             try{
-                conselorUpdations=counselorUpdationRepository.findByUser(user).orElseThrow()  ;
+                conselorUpdations=counselorUpdationRepository.findByUser(user).orElse(new ConselorUpdations())  ;
             }catch (Exception e){
-                conselorUpdations=new ConselorUpdations();
+               e.printStackTrace();
             }
 
             conselorUpdations.setQualification(qualificationRepository.findById(data.getQualificationId()).orElseThrow());

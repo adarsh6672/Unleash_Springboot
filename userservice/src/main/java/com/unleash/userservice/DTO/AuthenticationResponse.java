@@ -1,31 +1,26 @@
 package com.unleash.userservice.DTO;
 
 
+import com.unleash.userservice.Model.User;
+import lombok.Data;
 
+@Data
 public class AuthenticationResponse {
 
     private String token;
 
-    public String getRole() {
-        return role;
-    }
-
     private String role;
 
+    private UserDto user;
 
-    public AuthenticationResponse(String token , String role) {
+
+    public AuthenticationResponse(String token , String role ,UserDto user) {
         this.token = token;
         this.role = role;
+        this.user= user;
 
     }
 
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }
 

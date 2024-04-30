@@ -1,12 +1,19 @@
 package com.unleash.consultationservice.Service;
 
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 import com.unleash.consultationservice.DTO.PlanDto;
 import com.unleash.consultationservice.DTO.UserDto;
 import com.unleash.consultationservice.Interface.UserClient;
 import com.unleash.consultationservice.Model.CounselorAvilability;
+import com.unleash.consultationservice.Model.CounselorFundAccount;
 import com.unleash.consultationservice.Repository.CounselorAvailabilityRepo;
+import com.unleash.consultationservice.Repository.CounselorFundAccountRepo;
 import com.unleash.consultationservice.Service.serviceInterface.CounselorService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +31,16 @@ public class CounselorServiceImp implements CounselorService {
     private UserClient userClient;
 
     @Autowired
+    private CounselorFundAccountRepo fundAccountRepo;
+
+    @Autowired
     private CounselorAvailabilityRepo counselorAvailabilityRepo;
+
+    @Value("${razorpay.key_id}")
+    private String key;
+
+    @Value("${razorpay.secret_id}")
+    private String secret;
 
     @Override
     public boolean setSlot(List<String> list, String username){
@@ -101,9 +117,20 @@ public class CounselorServiceImp implements CounselorService {
 
     }
 
+    @Override
+    public ResponseEntity<?> getAccountDetails(int userId) {
+        try{
+            CounselorFundAccount account=fundAccountRepo.findByUserId(userId).orElseThrow();
+            return ResponseEntity.ok().body(account);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-
-
+    public ResponseEntity<?> createContact() throws RazorpayException {
+      return ResponseEntity.notFound().build();
+    }
 
 
 }

@@ -20,6 +20,6 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String  chatId;
-    private String  senderId;
-    private String  recipientId;
+    private int  senderId;
+    private int  recipientId;
 }

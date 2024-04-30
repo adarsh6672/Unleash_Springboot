@@ -20,9 +20,9 @@ public class ChatMessage {
 
     private String  chatId;
 
-    private String  senderId;
+    private int  senderId;
 
-    private String  recipientId;
+    private int  recipientId;
 
     private String content;
 
