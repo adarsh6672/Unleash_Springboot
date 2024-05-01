@@ -42,6 +42,8 @@ public class ArticleServiceImp implements ArticleService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else {
+            article.setImage("https://res.cloudinary.com/datji9d5p/image/upload/v1712993697/unleash/w2exlkie3209jz0qepts.jpg");
         }
         articleRepo.save(article);
         return ResponseEntity.ok().build();
@@ -70,6 +72,48 @@ public class ArticleServiceImp implements ArticleService {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteArticle(int articleId) {
+        try{
+            articleRepo.deleteById(articleId);
+            return ResponseEntity.ok().body("Article Deleted Successfully");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> editArticle(int articleId,String title, String content, int relatedTo, MultipartFile image) {
+        Article article= null;
+        try {
+            article = articleRepo.findById(articleId).orElseThrow();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+        if(content!=null &&  !article.getContent().equals(content)){
+            article.setContent(content);
+        }
+        if(title != null && !article.getTitle().equals(title)){
+            article.setTitle(title);
+        }
+        if(relatedTo!=0 && article.getRelatedTo()!=relatedTo){
+            article.setRelatedTo(relatedTo);
+        }
+
+        if(image!=null){
+            try{
+                article.setImage(cloudinaryService.upload(image));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        articleRepo.save(article);
+        return ResponseEntity.ok().build();
     }
 
 

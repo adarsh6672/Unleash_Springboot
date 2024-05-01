@@ -30,10 +30,10 @@ public class UserDto {
 
     private Role role;
 
-    @JsonIgnore
+
     private LocalDateTime joinedOn;
 
-    @JsonIgnore
+
     private boolean isBlocked;
 
     @JsonIgnore

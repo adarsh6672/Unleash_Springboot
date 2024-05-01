@@ -11,4 +11,8 @@ public interface ArticleService {
     ResponseEntity<?> getMyArticle(int userId);
 
     ResponseEntity<?> getAllArticles();
+
+    ResponseEntity<?> deleteArticle(int articleId);
+
+    ResponseEntity<?> editArticle(int articleId , String title, String content, int relatedTo,  MultipartFile image);
 }

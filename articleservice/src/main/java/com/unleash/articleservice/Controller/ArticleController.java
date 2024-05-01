@@ -15,13 +15,13 @@ public class ArticleController {
     private ArticleService articleService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addNewArticle(@RequestParam ("image") MultipartFile image,
+    public ResponseEntity<?> addNewArticle(@RequestParam(value = "image", required = false) MultipartFile image,
                                            @RequestParam ("title") String  title,
                                            @RequestParam ("content") String content,
                                            @RequestParam ("relatedTo") int relatedTo,
                                            @RequestParam ("counselorName") String counselorName,
                                            @RequestHeader ("userId") int userId){
-        System.out.println(title+""+ content + " " + relatedTo +" " + counselorName);
+
         return articleService.addNewArticle(title,content,relatedTo,counselorName,userId,image);
 
     }
@@ -35,6 +35,21 @@ public class ArticleController {
     @GetMapping("/get-all-articles")
     public ResponseEntity<?> getAllArticles(){
         return articleService.getAllArticles();
+    }
+    @DeleteMapping("/delete")
+    public ResponseEntity<?>deleteArticle(@RequestParam ("articleId") int articleId){
+        return articleService.deleteArticle(articleId);
+    }
+
+    @PutMapping("/edit-article")
+    public ResponseEntity<?> editArticle(@RequestParam(value = "image", required = false) MultipartFile image,
+                                         @RequestParam (value = "articleId", required = false) int articleId,
+                                         @RequestParam (value = "title", required = false) String  title,
+                                         @RequestParam (value = "content", required = false) String content,
+                                         @RequestParam (value = "relatedTo", required = false) int relatedTo
+                                         ){
+        return articleService.editArticle(articleId,title,content,relatedTo,image);
+
     }
 
 }
