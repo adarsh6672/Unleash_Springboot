@@ -123,7 +123,7 @@ public class CounselorServiceImp implements CounselorService {
             CounselorFundAccount account=fundAccountRepo.findByUserId(userId).orElseThrow();
             return ResponseEntity.ok().body(account);
         }catch (Exception e){
-            e.printStackTrace();
+
             return ResponseEntity.notFound().build();
         }
     }

@@ -51,7 +51,7 @@ public class SubscriptionServiceImp implements SubscriptionService {
         orderRequest.put("currency", "INR");
         orderRequest.put("receipt", "order_receipt_11");
 
-        Order order = razorpayClient.Orders.create(orderRequest);
+        Order order = razorpayClient.orders.create(orderRequest);
         System.out.println(order);
         String orderId = order.get("id");
 

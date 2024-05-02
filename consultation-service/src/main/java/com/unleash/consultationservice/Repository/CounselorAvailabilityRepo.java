@@ -28,4 +28,8 @@ public interface CounselorAvailabilityRepo extends JpaRepository<CounselorAvilab
     List<CounselorAvilability> findNextAvailableSlots(@Param("currentTime") LocalDateTime currentTime);
 
 
+
+        @Query(value = "SELECT COUNT(*) FROM counselor_avilability WHERE user_id = :userId AND is_booked = true AND slot >= :startDate AND slot <= :endDate", nativeQuery = true)
+        int countBookedSessionsByUserIdAndDate(@Param("userId") int userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
 }
