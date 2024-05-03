@@ -16,4 +16,8 @@ public interface PaymentService {
     ResponseEntity<?> getAllPendingPayments();
 
     ResponseEntity<?> procesPayment(int id) throws IOException;
+
+    ResponseEntity<?> getMyTransactions(int userId);
+
+    ResponseEntity<?> getAllTransactions();
 }

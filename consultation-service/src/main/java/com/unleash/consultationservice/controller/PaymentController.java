@@ -1,6 +1,7 @@
 package com.unleash.consultationservice.controller;
 
 import com.unleash.consultationservice.DTO.CreateContactDto;
+import com.unleash.consultationservice.Service.PaymentServiceImp;
 import com.unleash.consultationservice.Service.serviceInterface.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,9 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    @Autowired
+    private PaymentServiceImp paymentServiceImp;
+
 
     @PostMapping("/create-contact")
     public ResponseEntity<?>createContact(@RequestBody CreateContactDto dto){
@@ -31,7 +35,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/get-all-pendings")
+    @GetMapping("/get-lastweek-pendings")
     ResponseEntity<?>getAllPendingPayments (){
         return paymentService.getAllPendingPayments();
     }
@@ -46,6 +50,22 @@ public class PaymentController {
         }
 
 
+    }
+
+    @GetMapping("/counselor/get-transaction")
+    public ResponseEntity<?> getMyTransactions(@RequestHeader("userId") int userId){
+        return paymentService.getMyTransactions(userId);
+    }
+
+    @GetMapping("/admin/get-alltransaction")
+    public ResponseEntity<?> getAllTransactions(){
+        return paymentService.getAllTransactions();
+    }
+
+    @GetMapping("/force-weekly-calculation")
+    public ResponseEntity<?>createWeeklyCalculation(){
+        paymentServiceImp.runWeeklyPaymentCalculation();
+        return ResponseEntity.ok().body("generated payment list");
     }
 
 }

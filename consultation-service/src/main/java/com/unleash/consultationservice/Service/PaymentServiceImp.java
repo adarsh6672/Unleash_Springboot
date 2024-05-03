@@ -5,15 +5,15 @@ import com.unleash.consultationservice.DTO.CounselorPaymentProcess;
 import com.unleash.consultationservice.DTO.CreateContactDto;
 import com.unleash.consultationservice.DTO.UserDto;
 import com.unleash.consultationservice.Interface.UserClient;
-import com.unleash.consultationservice.Model.CounselorAvilability;
-import com.unleash.consultationservice.Model.CounselorFundAccount;
-import com.unleash.consultationservice.Repository.CounselorAvailabilityRepo;
-import com.unleash.consultationservice.Repository.CounselorFundAccountRepo;
+import com.unleash.consultationservice.Model.*;
+
+import com.unleash.consultationservice.Repository.*;
 import com.unleash.consultationservice.Service.serviceInterface.PaymentService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -26,10 +26,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PaymentServiceImp implements PaymentService {
@@ -47,9 +44,17 @@ public class PaymentServiceImp implements PaymentService {
     private CounselorAvailabilityRepo counselorAvailabilityRepo;
 
 
+    @Autowired
+    private WeekRepository weekRepository;
+
+    @Autowired
+    private WeeklySessionRepositroy weeklySessionRepositroy;
 
     @Autowired
     private UserClient userClient;
+
+    @Autowired
+    private CounselorTransactionRepository counselorTransactionRepository;
 
 
     @Override
@@ -69,7 +74,7 @@ public class PaymentServiceImp implements PaymentService {
         jsonObject.put("email", dto.getEmail());
         jsonObject.put("contact", dto.getContact());
         jsonObject.put("type", "employee");
-        jsonObject.put("reference_id", dto.getReferenceId());
+        jsonObject.put("reference_id", String.valueOf(dto.getReferenceId()));
 
         JSONObject notes = new JSONObject();
         notes.put("notes_key_1", "counselor contact");
@@ -158,27 +163,14 @@ public class PaymentServiceImp implements PaymentService {
 
     @Override
     public ResponseEntity<?> getAllPendingPayments(){
-        List<UserDto> counselors = userClient.findAllCounselors();
-        LocalDateTime currentDate = LocalDateTime.now();
-        LocalDateTime endOfWeek = currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)? currentDate : currentDate.minusDays(currentDate.getDayOfWeek().getValue() - 1);
-        LocalDateTime startOfWeek = endOfWeek.minusDays(6);
-        List<CounselorPaymentProcess> paymentProcessesList = new ArrayList<>();
-        for(UserDto dto : counselors){
-            int count = counselorAvailabilityRepo.countBookedSessionsByUserIdAndDate(dto.getId(),startOfWeek,endOfWeek);
-            CounselorPaymentProcess process = new CounselorPaymentProcess();
-            process.setCounselorid(dto.getId());
-            process.setCounselorName(dto.getFullname());
-            process.setSessionCount(count);
-            process.setTotalAmount(count*500);
-            paymentProcessesList.add(process);
-        }
-
-        return ResponseEntity.ok().body(paymentProcessesList);
+        WeekData week = weekRepository.findFirstByOrderByIdDesc();
+        List<WeeklySession> weeklySessionList = weeklySessionRepositroy.findByWeek(week);
+        return ResponseEntity.ok().body(weeklySessionList);
 
     }
 
     @Override
-    public ResponseEntity<?> procesPayment(int id) throws IOException {
+    public ResponseEntity<?> procesPayment(int weeklySessionId) throws IOException {
 
         URL url = new URL("https://api.razorpay.com/v1/payouts");
         String responseBody = null;
@@ -189,17 +181,15 @@ public class PaymentServiceImp implements PaymentService {
         conn.setRequestProperty("Authorization", "Basic " + Base64.getEncoder().encodeToString((key + ":" + secret).getBytes()));
 
 
-        LocalDateTime currentDate = LocalDateTime.now();
-        LocalDateTime endOfWeek = currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)? currentDate : currentDate.minusDays(currentDate.getDayOfWeek().getValue() - 1);
-        LocalDateTime startOfWeek = endOfWeek.minusDays(6);
-        int count = counselorAvailabilityRepo.countBookedSessionsByUserIdAndDate(id,startOfWeek,endOfWeek);
-        Optional<CounselorFundAccount> fundAccount = fundAccountRepo.findByUserId(id);
 
-        if(fundAccount.isPresent()){
+
+        WeeklySession weeklySession = weeklySessionRepositroy.findById(weeklySessionId).orElse(null);
+        Optional<CounselorFundAccount> fundAccount = fundAccountRepo.findByUserId(weeklySession.getUserId());
+        if(weeklySession!=null && fundAccount.isPresent()){
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("account_number", "2323230025711664");
             jsonObject.put("fund_account_id", fundAccount.get().getFundAccount());
-            jsonObject.put("amount", count*50000);
+            jsonObject.put("amount", weeklySession.getAmount()*100);
             jsonObject.put("currency", "INR");
             jsonObject.put("mode", "NEFT");
             jsonObject.put("purpose", "salary");
@@ -230,17 +220,20 @@ public class PaymentServiceImp implements PaymentService {
                 }
                 responseBody = response.toString();
                 System.out.println("Response Body: " + responseBody);
+                if(responseBody!=null){
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    CounselorTransactions transactions = new CounselorTransactions();
+                    transactions.setAmount(weeklySession.getAmount());
+                    transactions.setPayedOn(LocalDateTime.now());
+                    transactions.setFundAccountid(fundAccount.get().getFundAccount());
+                    transactions.setPayoutId(jsonResponse.getString("id"));
+                    transactions.setUserId(weeklySession.getUserId());
+                    counselorTransactionRepository.save(transactions);
+                    weeklySession.setTransactions(transactions);
+                    weeklySession.setPayed(true);
+                    weeklySessionRepositroy.save(weeklySession);
+                }
             }
-            /*if(responseBody!=null){
-                JSONObject jsonResponse = new JSONObject(responseBody);
-                String id = jsonResponse.getString("id");
-                try{
-                    createFundAccount(dto,id);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    return ResponseEntity.badRequest().build();
-                }*/
-
         }
 
 
@@ -249,10 +242,57 @@ public class PaymentServiceImp implements PaymentService {
             conn.disconnect();
             return ResponseEntity.ok().body("payment successfull");
 
-
-
-
     }
+
+    @Override
+    public ResponseEntity<?> getMyTransactions(int userId) {
+       List<CounselorTransactions>transactions=  counselorTransactionRepository.findByUserIdOrderByIdDesc(userId).orElse(null);
+       if(transactions!=null){
+           return ResponseEntity.ok().body(transactions);
+       }else {
+           return ResponseEntity.notFound().build();
+       }
+    }
+
+    @Override
+    public ResponseEntity<?> getAllTransactions() {
+        List<CounselorTransactions> transactions = counselorTransactionRepository.findAll();
+        Collections.sort(transactions, Comparator.comparingInt(CounselorTransactions::getId).reversed());
+        return ResponseEntity.ok().body(transactions);
+    }
+
+
+    @Scheduled(cron = "0 0 1 * * SUN")
+    public void runWeeklyPaymentCalculation(){
+        List<UserDto> counselors = userClient.findAllCounselors();
+        LocalDateTime currentDate = LocalDateTime.now().withHour(0).withMinute(0);
+        LocalDateTime endOfWeek = currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY)? currentDate : currentDate.minusDays(currentDate.getDayOfWeek().getValue() - 1);
+        LocalDateTime startOfWeek = endOfWeek.minusDays(6);
+
+        WeekData week = new WeekData();
+        week.setStartDate(startOfWeek);
+        week.setEndDate(endOfWeek);
+        weekRepository.save(week);
+
+
+        for(UserDto dto : counselors){
+            int count = counselorAvailabilityRepo.countBookedSessionsByUserIdAndDate(dto.getId(),startOfWeek,endOfWeek);
+            if(count>0){
+                WeeklySession weeklySession = new WeeklySession();
+                weeklySession.setAmount(count*500);
+                weeklySession.setCount(count);
+                weeklySession.setUserId(dto.getId());
+                weeklySession.setPayed(false);
+                weeklySession.setUserName(dto.getFullname());
+                weeklySession.setWeek(week);
+                weeklySessionRepositroy.save(weeklySession);
+            }
+
+        }
+    }
+
+
+
 
 
 }
