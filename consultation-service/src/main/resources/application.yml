@@ -31,6 +31,9 @@ spring:
     pattern:
       console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
       file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  cloud:
+    config:
+      uri: http://localhost:8888
 cloudinary:
   cloud_name: "datji9d5p"
   api_key: "348622365113146"
@@ -39,3 +42,4 @@ cloudinary:
 razorpay:
   key_id: "rzp_test_8b6GHpvbMnFOEM"
   secret_id: "meOU2C0AW0axCyREWHQYZ1Qf"
+
