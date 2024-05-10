@@ -1,7 +1,6 @@
 package com.unleash.consultationservice.Service;
 
 import com.razorpay.*;
-import com.unleash.consultationservice.DTO.CounselorPaymentProcess;
 import com.unleash.consultationservice.DTO.CreateContactDto;
 import com.unleash.consultationservice.DTO.UserDto;
 import com.unleash.consultationservice.Interface.UserClient;
@@ -12,6 +11,10 @@ import com.unleash.consultationservice.Service.serviceInterface.PaymentService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -153,20 +154,17 @@ public class PaymentServiceImp implements PaymentService {
         return true;
     }
 
-    public ResponseEntity<?> processPayments() throws RazorpayException {
-        RazorpayClient razorpayClient = new RazorpayClient(key,secret);
 
 
-        return ResponseEntity.ok().build();
-    }
+
 
 
     @Override
-    public ResponseEntity<?> getAllPendingPayments(){
+    public ResponseEntity<?> getLastWeekPayments(int pageNo){
         WeekData week = weekRepository.findFirstByOrderByIdDesc();
-        List<WeeklySession> weeklySessionList = weeklySessionRepositroy.findByWeek(week);
+        Pageable pageable = PageRequest.of(pageNo,10);
+        Page<WeeklySession> weeklySessionList =  weeklySessionRepositroy.findByWeek(week,pageable);
         return ResponseEntity.ok().body(weeklySessionList);
-
     }
 
     @Override
@@ -254,11 +252,20 @@ public class PaymentServiceImp implements PaymentService {
        }
     }
 
+
+
     @Override
-    public ResponseEntity<?> getAllTransactions() {
-        List<CounselorTransactions> transactions = counselorTransactionRepository.findAll();
-        Collections.sort(transactions, Comparator.comparingInt(CounselorTransactions::getId).reversed());
-        return ResponseEntity.ok().body(transactions);
+    public ResponseEntity<?> getAllTransactionsPage(int page){
+        Page<CounselorTransactions> transactionsPage =  counselorTransactionRepository.findAll(PageRequest.of(page, 10).withSort(Sort.by("id").descending()));
+        return ResponseEntity.ok().body(transactionsPage);
+    }
+
+    @Override
+    public ResponseEntity<?> processPaymentOfSelected(List<Integer> selectedIds) throws IOException {
+        for(int i : selectedIds){
+            procesPayment(i);
+        }
+        return ResponseEntity.ok().body("payment processed successfully ");
     }
 
 

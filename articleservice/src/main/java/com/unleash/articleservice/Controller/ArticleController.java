@@ -51,5 +51,9 @@ public class ArticleController {
         return articleService.editArticle(articleId,title,content,relatedTo,image);
 
     }
+    @GetMapping("/public/get-all-articles")
+    public ResponseEntity<?> getAllArticlesPublic(){
+        return articleService.getAllArticles();
+    }
 
 }

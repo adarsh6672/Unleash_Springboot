@@ -51,6 +51,11 @@ spring:
         - id: article-service
           uri: lb://ARTICLE-SERVICE
           predicates:
+            - Path=/article/public/**
+
+        - id: article-service
+          uri: lb://ARTICLE-SERVICE
+          predicates:
             - Path=/article/**
           filters:
             - AuthenticationFilter

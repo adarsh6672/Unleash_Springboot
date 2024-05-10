@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @RequestMapping("/consultation/payment")
@@ -35,13 +36,13 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/get-lastweek-pendings")
-    ResponseEntity<?>getAllPendingPayments (){
-        return paymentService.getAllPendingPayments();
+    @GetMapping("/get-lastweek-pendings/{pageNo}")
+    public ResponseEntity<?>getAllPendingPayments (@PathVariable ("pageNo") int pageNo){
+        return paymentService.getLastWeekPayments(pageNo);
     }
 
     @PostMapping("/process/{id}")
-    ResponseEntity<?> processPayment(@PathVariable ("id") int id){
+    public ResponseEntity<?> processPayment(@PathVariable ("id") int id){
         try {
             return paymentService.procesPayment(id);
         }catch (Exception e){
@@ -52,14 +53,25 @@ public class PaymentController {
 
     }
 
+    @PostMapping("/process/selected")
+    public ResponseEntity<?> processSelected(@RequestBody List<Integer> selectedIds){
+        try{
+            return paymentService.processPaymentOfSelected(selectedIds);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
     @GetMapping("/counselor/get-transaction")
     public ResponseEntity<?> getMyTransactions(@RequestHeader("userId") int userId){
         return paymentService.getMyTransactions(userId);
     }
 
-    @GetMapping("/admin/get-alltransaction")
-    public ResponseEntity<?> getAllTransactions(){
-        return paymentService.getAllTransactions();
+    @GetMapping("/admin/get-alltransaction/{pageNo}")
+    public ResponseEntity<?> getAllTransactions(@PathVariable ("pageNo") int pageNo){
+        return paymentService.getAllTransactionsPage(pageNo);
     }
 
     @GetMapping("/force-weekly-calculation")
