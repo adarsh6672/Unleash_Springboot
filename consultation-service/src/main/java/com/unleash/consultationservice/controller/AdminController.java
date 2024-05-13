@@ -1,8 +1,8 @@
 package com.unleash.consultationservice.controller;
 
-import com.unleash.consultationservice.DTO.PlanDto;
-import com.unleash.consultationservice.Service.CloudinaryService;
+import com.unleash.consultationservice.DTO.PromocodeDTO;
 import com.unleash.consultationservice.Service.serviceInterface.AdminServic;
+import com.unleash.consultationservice.Service.serviceInterface.PromocodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,8 @@ public class AdminController {
     @Autowired
     private AdminServic adminServic;
 
+    @Autowired
+    private PromocodeService promocodeService;
 
 
     @PostMapping(value = "/add-plan" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -34,7 +36,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("get-all-plans")
+    @GetMapping("/get-all-plans")
     public ResponseEntity<?> getAllPlans(){
         try{
             List list= adminServic.findAllPlans();
@@ -43,5 +45,20 @@ public class AdminController {
             e.printStackTrace();
             return ResponseEntity.unprocessableEntity().build();
         }
+    }
+
+    @GetMapping ("/get-all-bookings/{pageNo}")
+    public ResponseEntity<?> getAllBookings(@PathVariable ("pageNo") int pageNo){
+        return adminServic.getAllBookingDetails(pageNo);
+    }
+
+    @PostMapping ("/add-promocode")
+    public ResponseEntity<?> addPromocode(@RequestBody PromocodeDTO promocode){
+        return promocodeService.addPromocode(promocode);
+    }
+
+    @GetMapping("/getAllPromocode/{pageNo}")
+    public ResponseEntity<?> getAllPromocodes(@PathVariable ("pageNo") int pageNo){
+        return promocodeService.getAllPromocode(pageNo);
     }
 }

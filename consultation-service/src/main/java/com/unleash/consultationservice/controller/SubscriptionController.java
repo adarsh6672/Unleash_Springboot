@@ -4,6 +4,7 @@ import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.unleash.consultationservice.DTO.PaymentDto;
+import com.unleash.consultationservice.Service.serviceInterface.PromocodeService;
 import com.unleash.consultationservice.Service.serviceInterface.SubscriptionService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class SubscriptionController {
 
     @Autowired
     private SubscriptionService subscriptionService;
+
+    @Autowired
+    private PromocodeService promocodeService;
 
     @GetMapping("/payment/{amount}")
     public String Payment(@PathVariable String amount,@RequestHeader ("userId") int userId) throws RazorpayException {
@@ -38,6 +42,11 @@ public class SubscriptionController {
             return ResponseEntity.ok().body(true);
         }
         return ResponseEntity.ok().body(false);
+    }
+
+    @GetMapping("/check-promocode")
+    public ResponseEntity<?> checkPromocode(@RequestParam ("promocode") String promocode){
+        return promocodeService.getPromocodeDetails(promocode);
     }
 
 }

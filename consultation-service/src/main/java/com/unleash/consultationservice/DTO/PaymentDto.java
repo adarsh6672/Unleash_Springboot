@@ -10,4 +10,5 @@ public class PaymentDto {
     private String paymentId;
     private String orderId;
     private int planId;
+    private int promoId;
 }

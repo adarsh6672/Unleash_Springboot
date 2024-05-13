@@ -104,7 +104,6 @@ public class SessionServiceImp implements SessionService {
             List<SessionBooking> list = sessionBookingRepo.findByPatientId(userId);
             Collections.sort(list, new SessionBookingComparator());
             List<UserDto> counselors = userClient.findAllCounselors();
-            System.out.println(counselors);
             List<SessionDto> dtos = new ArrayList<>();
             for (SessionBooking booking : list) {
                 SessionDto dto = new SessionDto();

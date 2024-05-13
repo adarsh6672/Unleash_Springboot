@@ -5,9 +5,11 @@ import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.unleash.consultationservice.DTO.PaymentDto;
 import com.unleash.consultationservice.Model.Plans;
+import com.unleash.consultationservice.Model.PromoCode;
 import com.unleash.consultationservice.Model.Subscription;
 import com.unleash.consultationservice.Model.SubscriptionPayments;
 import com.unleash.consultationservice.Repository.PlanRepo;
+import com.unleash.consultationservice.Repository.PromoCodeRepo;
 import com.unleash.consultationservice.Repository.SubscriptionPaymentRepo;
 import com.unleash.consultationservice.Repository.SubscriptionRepo;
 import com.unleash.consultationservice.Service.serviceInterface.SubscriptionService;
@@ -30,6 +32,9 @@ public class SubscriptionServiceImp implements SubscriptionService {
 
     @Autowired
     private SubscriptionRepo subscriptionRepo;
+
+    @Autowired
+    private PromoCodeRepo promoCodeRepo;
 
     @Value("${razorpay.key_id}")
     private String key;
@@ -89,6 +94,9 @@ public class SubscriptionServiceImp implements SubscriptionService {
             subscription.setStartFrom(LocalDateTime.now().withHour(0));
             subscription.setEndOn(LocalDateTime.now().plusMonths(6).withHour(23).withMinute(59));
             subscription.setPromoCode(null);
+            if(dto.getPromoId()!=0){
+                subscription.setPromoCode(promoCodeRepo.findById(dto.getPromoId()).orElse(null));
+            }
             subscription.setUserId(payments.getUserId());
             subscription.setSessionCount(plans.getNoOfSession());
             subscription.setPlans(plans);

@@ -14,4 +14,6 @@ public interface AdminServic {
      boolean addPlan(Map planDto, MultipartFile file) throws IOException;
 
     List<Plans> findAllPlans();
+
+    ResponseEntity<?> getAllBookingDetails(int pageNo);
 }
