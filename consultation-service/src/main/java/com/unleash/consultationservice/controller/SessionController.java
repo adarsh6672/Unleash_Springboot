@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.controller;
 
+import com.unleash.consultationservice.DTO.FeedbackDto;
 import com.unleash.consultationservice.Service.serviceInterface.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +37,12 @@ public class SessionController {
     public ResponseEntity<?> getAllBookingsOfCounselor(@RequestHeader ("userId") int userId){
         return sessionService.findAllBookingsForCounselor(userId);
     }
+
+    @PostMapping("/feedback/submit")
+    public ResponseEntity<?> submitSessionFeedback(@RequestBody FeedbackDto feedbackDto){
+        return sessionService.submitFeedback(feedbackDto);
+    }
+
+
+
 }

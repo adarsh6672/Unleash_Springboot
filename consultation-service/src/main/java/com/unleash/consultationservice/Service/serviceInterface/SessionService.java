@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.Service.serviceInterface;
 
+import com.unleash.consultationservice.DTO.FeedbackDto;
 import org.springframework.http.ResponseEntity;
 
 public interface SessionService {
@@ -14,4 +15,8 @@ public interface SessionService {
     ResponseEntity<?> cancelSession(int slotId);
 
     ResponseEntity<?> findAllBookingsForCounselor(int userId);
+
+    ResponseEntity<?> submitFeedback(FeedbackDto feedbackDto);
+
+    ResponseEntity<?> getfeedbackofCounselor(int counselorId, int pageNo);
 }

@@ -2,17 +2,20 @@ package com.unleash.consultationservice.Service;
 
 import com.unleash.consultationservice.DTO.*;
 import com.unleash.consultationservice.Interface.UserClient;
-import com.unleash.consultationservice.Model.CounselorAvilability;
-import com.unleash.consultationservice.Model.Plans;
-import com.unleash.consultationservice.Model.SessionBooking;
-import com.unleash.consultationservice.Model.Subscription;
+import com.unleash.consultationservice.Model.*;
 import com.unleash.consultationservice.Model.Util.SessionBookingComparator;
 import com.unleash.consultationservice.Model.Util.Status;
 import com.unleash.consultationservice.Repository.CounselorAvailabilityRepo;
+import com.unleash.consultationservice.Repository.FeedbackRepository;
 import com.unleash.consultationservice.Repository.SessionBookingRepo;
 import com.unleash.consultationservice.Repository.SubscriptionRepo;
 import com.unleash.consultationservice.Service.serviceInterface.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SessionServiceImp implements SessionService {
@@ -36,6 +40,9 @@ public class SessionServiceImp implements SessionService {
 
     @Autowired
     private UserClient userClient;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
 
     @Override
@@ -181,4 +188,34 @@ public class SessionServiceImp implements SessionService {
         }
        return ResponseEntity.badRequest().build();
     }
+
+    @Override
+    public ResponseEntity<?> submitFeedback(FeedbackDto feedbackDto) {
+        try {
+            Feedback feedback = new Feedback();
+            Optional<SessionBooking> sessionBooking = sessionBookingRepo.findById(feedbackDto.getSessionId());
+            if(sessionBooking.isPresent()){
+                feedback.setRating(feedbackDto.getRating());
+                feedback.setFeedback(feedbackDto.getFeedback());
+                feedback.setPatientId(sessionBooking.get().getPatientId());
+                feedback.setCounselorId(sessionBooking.get().getAvilability().getUserId());
+                feedback.setSessionBooking(sessionBooking.get());
+                feedback.setTimeStamp(LocalDateTime.now());
+                feedbackRepository.save(feedback);
+            }
+            return ResponseEntity.ok().body("Submitted Feedback");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Internal Error");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getfeedbackofCounselor(int counselorId, int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo,5).withSort(Sort.by("id").descending());
+        Page<Feedback> feedbacks = feedbackRepository.findByCounselorId(counselorId,pageable );
+        return ResponseEntity.ok().body(feedbacks);
+    }
+
+
 }
