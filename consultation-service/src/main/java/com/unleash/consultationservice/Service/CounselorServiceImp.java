@@ -3,6 +3,7 @@ package com.unleash.consultationservice.Service;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import com.unleash.consultationservice.DTO.CounselorDashBoardDTO;
 import com.unleash.consultationservice.DTO.PlanDto;
 import com.unleash.consultationservice.DTO.UserDto;
 import com.unleash.consultationservice.Interface.UserClient;
@@ -10,6 +11,8 @@ import com.unleash.consultationservice.Model.CounselorAvilability;
 import com.unleash.consultationservice.Model.CounselorFundAccount;
 import com.unleash.consultationservice.Repository.CounselorAvailabilityRepo;
 import com.unleash.consultationservice.Repository.CounselorFundAccountRepo;
+import com.unleash.consultationservice.Repository.SessionBookingRepo;
+import com.unleash.consultationservice.Repository.WeeklySessionRepositroy;
 import com.unleash.consultationservice.Service.serviceInterface.CounselorService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -35,6 +39,12 @@ public class CounselorServiceImp implements CounselorService {
 
     @Autowired
     private CounselorAvailabilityRepo counselorAvailabilityRepo;
+
+    @Autowired
+    private SessionBookingRepo sessionBookingRepo;
+
+    @Autowired
+    private WeeklySessionRepositroy weeklySessionRepositroy;
 
     @Value("${razorpay.key_id}")
     private String key;
@@ -125,6 +135,32 @@ public class CounselorServiceImp implements CounselorService {
         }catch (Exception e){
 
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    public CounselorDashBoardDTO getDashboardData(int userId) {
+        try{
+            CounselorDashBoardDTO counselorDashBoardDTO = new CounselorDashBoardDTO();
+            counselorDashBoardDTO.setTodaysSession(
+                    counselorAvailabilityRepo.countBookedSessionsByUserIdAndDate(userId,LocalDateTime.now().withHour(0),LocalDateTime.now().withHour(23))
+
+            );
+            counselorDashBoardDTO.setTotalSession(
+                    counselorAvailabilityRepo.countBookedSessionsByUserId(userId)
+            );
+            counselorDashBoardDTO.setTotalIncome(
+                    weeklySessionRepositroy.getTotalAmountForPaidSessions(userId).toString()
+            );
+            counselorDashBoardDTO.setLastWeekPending(
+                    weeklySessionRepositroy.getTotalAmountForUnPaidSessions(userId).toString()
+            );
+
+           return counselorDashBoardDTO;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 

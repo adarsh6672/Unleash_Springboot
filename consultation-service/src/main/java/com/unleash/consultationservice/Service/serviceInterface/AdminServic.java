@@ -1,6 +1,8 @@
 package com.unleash.consultationservice.Service.serviceInterface;
 
+import com.unleash.consultationservice.DTO.DashboardDTO;
 import com.unleash.consultationservice.DTO.PlanDto;
+import com.unleash.consultationservice.DTO.SubscriptionChartDTO;
 import com.unleash.consultationservice.Model.Plans;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,4 +18,8 @@ public interface AdminServic {
     List<Plans> findAllPlans();
 
     ResponseEntity<?> getAllBookingDetails(int pageNo);
+
+    DashboardDTO getDashboardData();
+
+    List<SubscriptionChartDTO> getSubscriptionChartData(String wise);
 }

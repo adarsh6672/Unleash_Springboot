@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.Service.serviceInterface;
 
+import com.unleash.consultationservice.DTO.CounselorDashBoardDTO;
 import com.unleash.consultationservice.Model.CounselorAvilability;
 import org.springframework.http.ResponseEntity;
 
@@ -19,4 +20,6 @@ public interface CounselorService {
     boolean removeSingleSlot(int userId, String date);
 
     ResponseEntity<?> getAccountDetails(int userId);
+
+    CounselorDashBoardDTO getDashboardData(int userId);
 }

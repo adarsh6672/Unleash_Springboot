@@ -1,5 +1,6 @@
 package com.unleash.userservice.controller;
 
+import com.unleash.userservice.DTO.DashboardDTO;
 import com.unleash.userservice.Model.User;
 import com.unleash.userservice.Reposetory.UserRepository;
 import com.unleash.userservice.Service.services.AdminService;
@@ -79,6 +80,11 @@ public class AdminController {
     @PostMapping("/approve-update/{id}")
     public ResponseEntity<?> approveUpdate(@PathVariable ("id") int id){
         return ResponseEntity.ok().body(adminService.approveUpdate(id));
+    }
+
+    @GetMapping("/get-dashboard-data")
+    public ResponseEntity<DashboardDTO>getAdminDashboradData(){
+        return ResponseEntity.ok().body(adminService.getDashboardData());
     }
 
 

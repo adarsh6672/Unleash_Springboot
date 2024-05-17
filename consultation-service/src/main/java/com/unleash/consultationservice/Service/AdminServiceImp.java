@@ -1,13 +1,13 @@
 package com.unleash.consultationservice.Service;
 
-import com.unleash.consultationservice.DTO.APIResponse;
-import com.unleash.consultationservice.DTO.SessionDto;
-import com.unleash.consultationservice.DTO.UserDto;
+import com.unleash.consultationservice.DTO.*;
 import com.unleash.consultationservice.Interface.UserClient;
 import com.unleash.consultationservice.Model.Plans;
 import com.unleash.consultationservice.Model.SessionBooking;
 import com.unleash.consultationservice.Repository.PlanRepo;
 import com.unleash.consultationservice.Repository.SessionBookingRepo;
+import com.unleash.consultationservice.Repository.SubscriptionPaymentRepo;
+import com.unleash.consultationservice.Repository.SubscriptionRepo;
 import com.unleash.consultationservice.Service.serviceInterface.AdminServic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,12 @@ public class AdminServiceImp implements AdminServic {
 
     @Autowired
     UserClient userClient;
+
+    @Autowired
+     SubscriptionPaymentRepo subscriptionPaymentRepo;
+
+    @Autowired
+    SubscriptionRepo subscriptionRepo;
 
     @Autowired
     SessionBookingRepo sessionBookingRepo;
@@ -90,5 +99,54 @@ public class AdminServiceImp implements AdminServic {
 
         return ResponseEntity.badRequest().build();
 
+    }
+
+    @Override
+    public DashboardDTO getDashboardData() {
+        try{
+            DashboardDTO dashboardDTO = userClient.getAdminDashboradData().getBody();
+            dashboardDTO.setTodayIncome(subscriptionPaymentRepo.getTotalAmountForToday());
+            dashboardDTO.setActiveSubscribers(subscriptionRepo.countBySessionCountGreaterThan(0));
+            return dashboardDTO;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<SubscriptionChartDTO> getSubscriptionChartData(String wise) {
+
+        try{
+            if(wise.equals("DAILY")){
+                List<SubscriptionChartDTO> list = new ArrayList<>();
+
+                for(int i=6 ; i>=0 ; i--){
+                    LocalDate date = LocalDate.now().minusDays(i);
+                    SubscriptionChartDTO dto = new SubscriptionChartDTO();
+                    dto.setX(date.toString());
+                    dto.setY(subscriptionPaymentRepo.getTotalAmountForGivenDate(date));
+                    list.add(dto);
+
+                }
+                return list;
+            } else if (wise.equals("MONTHLY")) {
+                List<SubscriptionChartDTO> list = new ArrayList<>();
+                int  totalMonth = LocalDate.now().getMonthValue();
+                LocalDate date = LocalDate.now();
+                for(int i=0 ; i<totalMonth;i++){
+                    SubscriptionChartDTO dto = new SubscriptionChartDTO();
+                    dto.setX(Month.of(i+1).toString());
+                    dto.setY((subscriptionPaymentRepo.getTotalAmountForMonth(date.getYear() , i)));
+                    list.add(dto);
+                }
+                return list;
+            }
+            return null;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -61,4 +61,15 @@ public class AdminController {
     public ResponseEntity<?> getAllPromocodes(@PathVariable ("pageNo") int pageNo){
         return promocodeService.getAllPromocode(pageNo);
     }
+
+    @GetMapping("/get-dashboard-data")
+    public ResponseEntity<?> getDashboardData(){
+        return ResponseEntity.ok().body(adminServic.getDashboardData());
+    }
+
+    @GetMapping("/subscription-data/{wise}")
+    public ResponseEntity<?> getSubscriptionChartData(@PathVariable("wise")String wise){
+        return ResponseEntity.ok().body(adminServic.getSubscriptionChartData(wise));
+    }
+
 }

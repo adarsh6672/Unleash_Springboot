@@ -5,6 +5,7 @@ import com.unleash.consultationservice.Model.SessionBooking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,5 +17,7 @@ public interface SessionBookingRepo extends JpaRepository<SessionBooking , Integ
     List<SessionBooking> findByPatientId(int patientId);
 
     Optional<SessionBooking> findByAvilability(CounselorAvilability avilability);
+
+    List<SessionBooking> findByAvilabilityUserIdAndBookingTimeBetween(int userId, LocalDate today, LocalDate tomorrow);
 
 }

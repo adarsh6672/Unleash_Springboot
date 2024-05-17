@@ -1,6 +1,7 @@
 package com.unleash.userservice.Service;
 
 import com.unleash.userservice.DTO.CouselorDataDto;
+import com.unleash.userservice.DTO.DashboardDTO;
 import com.unleash.userservice.DTO.UserDto;
 import com.unleash.userservice.Model.ConselorUpdations;
 import com.unleash.userservice.Model.CounselorData;
@@ -187,7 +188,13 @@ public class AdminServiceImp implements AdminService {
 
     }
 
-
+    @Override
+    public DashboardDTO getDashboardData() {
+        DashboardDTO dashboardDTO = new DashboardDTO();
+        dashboardDTO.setTotalCounselors(findAllCounselors().size());
+        dashboardDTO.setTotalPatients(findPatients().size());
+        return dashboardDTO;
+    }
 
 
 }

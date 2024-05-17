@@ -21,4 +21,9 @@ public class CounselorPaymentController {
         return counselorService.getAccountDetails(userId);
     }
 
+    @GetMapping("/get-dashboard-data")
+    public ResponseEntity<?> getDashboardData(@RequestHeader("userId")int userId){
+        return ResponseEntity.ok().body(counselorService.getDashboardData(userId));
+    }
+
 }

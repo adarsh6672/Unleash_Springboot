@@ -1,6 +1,7 @@
 package com.unleash.userservice.Service.services;
 
 import com.unleash.userservice.DTO.CouselorDataDto;
+import com.unleash.userservice.DTO.DashboardDTO;
 import com.unleash.userservice.DTO.UserDto;
 import com.unleash.userservice.Model.ConselorUpdations;
 import org.springframework.http.ResponseEntity;
@@ -27,4 +28,6 @@ public interface AdminService {
     List<ConselorUpdations> findCounselorUpdations();
 
     boolean approveUpdate(int id);
+
+    DashboardDTO getDashboardData();
 }

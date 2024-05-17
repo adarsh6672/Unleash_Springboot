@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.Interface;
 
+import com.unleash.consultationservice.DTO.DashboardDTO;
 import com.unleash.consultationservice.DTO.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,7 @@ public interface UserClient {
 
     @GetMapping("/user/admin/fetchpatients")
     public ResponseEntity<List<UserDto>> getPatients();
+
+    @GetMapping("/user/admin/get-dashboard-data")
+    public ResponseEntity<DashboardDTO>getAdminDashboradData();
 }

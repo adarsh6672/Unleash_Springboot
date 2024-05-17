@@ -15,5 +15,7 @@ public interface SubscriptionRepo extends JpaRepository<Subscription , Integer> 
     @Query("SELECT s FROM Subscription s WHERE s.userId = :userId ORDER BY s.id DESC LIMIT 1")
     Optional<Subscription> findLatestSubscriptionByUserId(int userId);
 
+    int countBySessionCountGreaterThan(int sessionCount);
+
 
 }
