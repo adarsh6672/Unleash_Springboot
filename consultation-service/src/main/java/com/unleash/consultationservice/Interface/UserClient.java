@@ -5,6 +5,7 @@ import com.unleash.consultationservice.DTO.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -33,4 +34,7 @@ public interface UserClient {
 
     @GetMapping("/user/admin/get-dashboard-data")
     public ResponseEntity<DashboardDTO>getAdminDashboradData();
+
+    @GetMapping("/public/get-user/{id}")
+    public ResponseEntity<UserDto> getUserWithUserId(@PathVariable("id") int id);
 }

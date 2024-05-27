@@ -1,5 +1,6 @@
 package com.unleash.consultationservice.Service;
 
+import com.unleash.base_domain.Dto.NotificationDto;
 import com.unleash.consultationservice.DTO.*;
 import com.unleash.consultationservice.Interface.UserClient;
 import com.unleash.consultationservice.Model.*;
@@ -44,6 +45,9 @@ public class SessionServiceImp implements SessionService {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
+    @Autowired
+    private KafkaPublisherService kafkaPublisherService;
+
 
     @Override
     @Transactional
@@ -67,6 +71,14 @@ public class SessionServiceImp implements SessionService {
                 responseDto.setCounselor(userClient.findUsername(avilability.getUserId()));
                 responseDto.setSessionId(booking.getId());
                 responseDto.setBookedOn(avilability.getSlot());
+
+                NotificationDto notificationDto = new NotificationDto();
+                notificationDto.setUserId(userId);
+                notificationDto.setMessage(" Your Session booked successfully . \n  Session Time : "+avilability.getSlot()+
+                        "\n Thank you \n Team Unleash");
+                notificationDto.setSubject("Booking Confirmed");
+                kafkaPublisherService.createNotification(notificationDto);
+
                 return ResponseEntity.ok().body(responseDto);
             }
         }catch (Exception e){

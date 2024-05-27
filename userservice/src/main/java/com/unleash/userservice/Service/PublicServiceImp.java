@@ -94,4 +94,14 @@ public class PublicServiceImp {
 
 
     }
+
+    public ResponseEntity<?> getUserById(int id) {
+        try {
+            User user= userRepository.findById(id).orElseThrow();
+            UserDto dto = modelMapper.map(user,UserDto.class);
+            return ResponseEntity.ok().body(dto);
+        }catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
