@@ -8,8 +8,11 @@ import com.unleash.userservice.Reposetory.UserRepository;
 import com.unleash.userservice.Service.services.JwtService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +29,9 @@ public class UserServiceImp {
 
     @Autowired
     private CounselorDateRepository counselorDateRepository;
+
+    @Autowired
+    private CloudinaryServiceImp cloudinaryServiceImp;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -49,5 +55,18 @@ public class UserServiceImp {
                 .collect(Collectors.toList());
 
         return userDtos;
+    }
+
+    public ResponseEntity<?> updateProfilePic(int userId, MultipartFile profilePic) {
+        try {
+            User user = userRepository.findById(userId).orElseThrow();
+            String uri = cloudinaryServiceImp.upload(profilePic);
+            user.setProfilePic(uri);
+            userRepository.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
