@@ -18,6 +18,5 @@ public class Language {
 
     private String language;
 
-    /*@ManyToMany(mappedBy = "languages")
-    private Set<User> users = new HashSet<>();*/
+
 }

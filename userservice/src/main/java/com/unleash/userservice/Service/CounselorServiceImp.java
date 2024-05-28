@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -94,24 +95,32 @@ public class CounselorServiceImp implements CounselorService {
             /*counselorData.setSpecialization(specializationRepository.getReferenceById(data.getSpecializationId()));*/
             counselorData.setUploadedOn(LocalDateTime.now());
             counselorData.setYoe(data.getYoe());
-            counselorData.setGender(genderRepository.findById(data.getGenderId()).orElseThrow());
+            counselorData.setGender(genderRepository.findById(data.getGenderId()).orElse(null));
 
             List<Integer> specializationIds = data.getSpecializations();
             Set<Specialization> sp = counselorData.getSpecializations();
-            for(Integer spl : specializationIds){
-                sp.add(specializationRepository.findById(spl).orElseThrow());
+            for(int spl : specializationIds){
+                Specialization spec =specializationRepository.findById(spl).orElse(null);
+                if(spec != null ){
+                    sp.add(spec);
+                }
             }
             counselorData.setSpecializations(sp);
 
             List<Integer> langIds = data.getLanguages();
             Set<Language> la= counselorData.getLanguages();
-            for(Integer language : langIds){
-                la.add(languageRepository.findById(language).orElseThrow());
+            for(int id : langIds){
+                Language lang = languageRepository.findById(id).orElse(null);
+                if(lang != null){
+                    la.add(lang);
+                }
             }
+            System.out.println(langIds);
             counselorData.setLanguages(la);
             counselorDateRepository.save(counselorData);
             return true;
         }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
 

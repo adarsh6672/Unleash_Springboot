@@ -1,5 +1,7 @@
 package com.unleash.userservice.controller;
 
+import com.unleash.userservice.DTO.ChangePasswordDTO;
+import com.unleash.userservice.DTO.ProfileDataDTO;
 import com.unleash.userservice.DTO.UserDto;
 import com.unleash.userservice.Service.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,20 @@ public class UserController {
     }
 
     @PostMapping("/update-profile-photo")
-    public ResponseEntity<?> updateProfileData(@RequestPart("profilePic") MultipartFile profilePic,
+    public ResponseEntity<?> updateProfilePhoto(@RequestPart("profilePic") MultipartFile profilePic,
                                                @RequestHeader ("userId") int userId){
         return userServiceImp.updateProfilePic(userId,profilePic);
+    }
+
+    @PutMapping("/update-profile-data")
+    public ResponseEntity<?> updateProfileData(@RequestHeader ("userId") int userId,
+                                               @RequestBody ProfileDataDTO profileDataDTO){
+        return userServiceImp.updateProfileData(userId,profileDataDTO);
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestHeader ("userId") int userId,
+                                            @RequestBody ChangePasswordDTO changePasswordDTO){
+        return userServiceImp.updatePassword(userId, changePasswordDTO);
     }
 }

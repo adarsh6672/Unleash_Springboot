@@ -31,11 +31,12 @@ public class CounselorData {
 
     private boolean isVerified;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "user_language",
             joinColumns = @JoinColumn(name = "counselor_data_id"),
             inverseJoinColumns = @JoinColumn(name = "language_id")
+
     )
     private Set<Language> languages = new HashSet<>();
 

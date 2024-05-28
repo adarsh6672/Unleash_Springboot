@@ -3,9 +3,7 @@ package com.unleash.userservice.Service;
 import com.unleash.userservice.DTO.CouselorDataDto;
 import com.unleash.userservice.DTO.DashboardDTO;
 import com.unleash.userservice.DTO.UserDto;
-import com.unleash.userservice.Model.ConselorUpdations;
-import com.unleash.userservice.Model.CounselorData;
-import com.unleash.userservice.Model.User;
+import com.unleash.userservice.Model.*;
 import com.unleash.userservice.Reposetory.CounselorDateRepository;
 import com.unleash.userservice.Reposetory.CounselorUpdationRepository;
 import com.unleash.userservice.Reposetory.LanguageRepository;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -163,6 +162,7 @@ public class AdminServiceImp implements AdminService {
 
             user.setFullname(updations.getFullname());
 
+
             counselorData.setSpecializations(counselorData.getSpecializations());
             if(updations.getExperienceProof()!=null){
                 counselorData.setYoe(updations.getYoe());
@@ -172,8 +172,19 @@ public class AdminServiceImp implements AdminService {
                 counselorData.setQualificationProof(updations.getQualificationProof());
                 counselorData.setQualification(updations.getQualification());
             }
-            /*counselorData.setLanguages(updations.getLanguages());
-            counselorData.setSpecializations(updations.getSpecializations());*/
+
+
+            Set<Language> lang1 = counselorData.getLanguages();
+            Set<Language> lang2 = updations.getLanguages();
+            lang1.addAll(lang2);
+            counselorData.setLanguages(lang1);
+
+
+            Set<Specialization> spe1 = counselorData.getSpecializations();
+            Set<Specialization> spe2 = updations.getSpecializations();
+            spe1.addAll(spe2);
+            counselorData.setSpecializations(spe1);
+
             counselorDateRepository.save(counselorData);
             userRepository.save(user);
             counselorUpdationRepository.deleteById(id);
